@@ -1,0 +1,6 @@
+{
+  "name": "GrandStay Hotel Ops",
+  "description": "Internal-facing hotel management system with dashboard, calendar, bookings, and financial tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

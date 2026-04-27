@@ -1,0 +1,207 @@
+import React, { useState } from 'react';
+import { QrCode, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
+import { useData } from '../context/DataContext';
+
+export default function CheckInOut() {
+  const { bookings, rooms, updateBooking, updateRoom } = useData();
+  const [view, setView] = useState<'arrivals' | 'departures'>('arrivals');
+
+  const arrivingToday = bookings.filter(b => {
+    const today = new Date('2023-10-23'); // Demo date
+    const checkin = new Date(b.checkIn);
+    return checkin.toDateString() === today.toDateString() && b.status === 'Confirmed';
+  });
+
+  const departingToday = bookings.filter(b => {
+    const today = new Date('2023-10-23'); // Demo date
+    const checkout = new Date(b.checkOut);
+    return checkout.toDateString() === today.toDateString() && b.status === 'Checked-in';
+  });
+
+  const activeBookings = view === 'arrivals' ? arrivingToday : departingToday;
+
+  const handleCheckIn = (bookingId: string, roomId: string) => {
+    const booking = bookings.find(b => b.id === bookingId);
+    const room = rooms.find(r => r.id === roomId);
+    if (booking && room) {
+      updateBooking({ ...booking, status: 'Checked-in' });
+      updateRoom({ ...room, status: 'Occupied' });
+    }
+  };
+
+  const handleCheckOut = (bookingId: string, roomId: string) => {
+    const booking = bookings.find(b => b.id === bookingId);
+    const room = rooms.find(r => r.id === roomId);
+    if (booking && room) {
+      updateBooking({ ...booking, status: 'Checked-out' });
+      updateRoom({ ...room, status: 'Cleaning' });
+    }
+  };
+
+  return (
+    <div className="space-y-6 pb-20">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Check-in / Check-out</h1>
+          <p className="text-slate-500 text-sm mt-1">Manage guest transitions and room status.</p>
+        </div>
+        <div className="flex bg-slate-200/50 p-1 rounded-lg border border-slate-200 w-full sm:w-auto">
+          <button 
+            onClick={() => setView('arrivals')}
+            className={`flex-1 sm:flex-none px-4 py-1.5 text-xs font-bold rounded-md tracking-tight whitespace-nowrap transition-all ${view === 'arrivals' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+          >
+            Arriving Today
+          </button>
+          <button 
+            onClick={() => setView('departures')}
+            className={`flex-1 sm:flex-none px-4 py-1.5 text-xs font-bold rounded-md tracking-tight whitespace-nowrap transition-all ${view === 'departures' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+          >
+            Departing Today
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+        <StatWidget label="Expected" value={activeBookings.length.toString()} highlight={`${view === 'arrivals' ? '+12% today' : 'Normal volume'}`} trend={view === 'arrivals'} />
+        <StatWidget label="Rooms Ready" value={rooms.filter(r => r.status === 'Available').length.toString()} progress={Math.round((rooms.filter(r => r.status === 'Available').length / rooms.length) * 100)} />
+        <StatWidget label="Pending Actions" value={activeBookings.length.toString()} highlight={view === 'arrivals' ? 'Needs check-in' : 'Needs check-out'} alert />
+        <div className="bg-slate-900 p-5 rounded-lg text-white border-0 shadow-md flex flex-col justify-between overflow-hidden relative">
+          <QrCode className="absolute -right-4 -bottom-4 w-20 h-20 text-white/5 rotate-12" />
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest relative z-10">Quick Actions</p>
+          <button className="w-full mt-4 bg-blue-600 text-white py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-blue-700 transition-all text-xs relative z-10">
+            <QrCode size={16} />
+            Scan QR
+          </button>
+        </div>
+      </div>
+
+      <div className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+        <div className="p-4 border-b border-slate-100 flex flex-col xs:flex-row items-start xs:items-center justify-between bg-slate-50/30 gap-3">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-slate-200 cursor-pointer text-xs font-semibold text-slate-700">
+              <Filter size={14} className="text-slate-400" />
+              <span>All Room Types</span>
+              <ChevronLeft size={14} className="rotate-[-90deg] text-slate-300" />
+            </div>
+          </div>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+            {view === 'arrivals' ? `Today: ${arrivingToday.length} arrivals` : `Today: ${departingToday.length} departures`}
+          </p>
+        </div>
+
+        <div className="overflow-x-auto overflow-y-hidden">
+          <table className="w-full text-left text-sm min-w-[600px] border-collapse translate-z-0">
+            <thead className="bg-slate-50/50 text-slate-400 text-[10px] uppercase font-bold tracking-widest border-b border-slate-100">
+              <tr>
+                <th className="px-6 py-3 whitespace-nowrap">Guest & Booking</th>
+                <th className="px-4 py-3 whitespace-nowrap">Room Info</th>
+                <th className="px-4 py-3 whitespace-nowrap">Status</th>
+                <th className="px-4 py-3 whitespace-nowrap">Cleaning</th>
+                <th className="px-6 py-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {activeBookings.length > 0 ? activeBookings.map((b, i) => {
+                const room = rooms.find(r => r.id === b.roomId);
+                
+                return (
+                  <tr key={i} className="hover:bg-slate-50/30 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-600 text-[10px] shrink-0">
+                          {b.guestName.split(' ').map(n => n[0]).join('')}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-semibold text-slate-900 leading-none truncate">{b.guestName}</p>
+                          <p className="text-[10px] text-slate-400 font-medium mt-1">Ref: {b.id}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-4">
+                      <p className="font-bold text-slate-800 text-xs">Room {room?.number}</p>
+                      <p className="text-[10px] text-slate-400 leading-none uppercase truncate">{room?.type}</p>
+                    </td>
+                    <td className="px-4 py-4">
+                      <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-tight ${
+                        b.status === 'Checked-in' ? 'bg-emerald-100 text-emerald-700' : 
+                        b.status === 'Checked-out' ? 'bg-slate-100 text-slate-400' : 'bg-blue-100 text-blue-700'
+                      }`}>
+                        {b.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="flex items-center gap-1.5 overflow-hidden">
+                        <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${room?.status === 'Available' ? 'bg-emerald-500' : room?.status === 'Cleaning' ? 'bg-amber-500' : 'bg-blue-500'}`}></div>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase truncate">
+                          {room?.status}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      {view === 'arrivals' ? (
+                        <button 
+                          onClick={() => handleCheckIn(b.id, b.roomId)}
+                          disabled={room?.status !== 'Available'}
+                          className="bg-blue-600 text-white px-4 py-1.5 rounded-lg font-semibold text-[10px] uppercase tracking-wide hover:bg-blue-700 transition-colors shadow-sm whitespace-nowrap disabled:opacity-50 disabled:pointer-events-none"
+                        >
+                          Check-in
+                        </button>
+                      ) : (
+                        <button 
+                          onClick={() => handleCheckOut(b.id, b.roomId)}
+                          className="bg-slate-800 text-white px-4 py-1.5 rounded-lg font-semibold text-[10px] uppercase tracking-wide hover:bg-slate-900 transition-colors shadow-sm whitespace-nowrap"
+                        >
+                          Check-out
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              }) : (
+                <tr>
+                  <td colSpan={5} className="px-6 py-10 text-center text-slate-400 text-sm italic">
+                    No {view} scheduled for today.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="px-6 py-3 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
+          <p className="text-xs text-slate-400 font-medium">Showing {activeBookings.length} results</p>
+          <div className="flex items-center gap-2">
+            <button className="p-1.5 text-slate-300 hover:text-blue-900 transition-colors" disabled>
+              <ChevronLeft size={18} />
+            </button>
+            <button className="w-8 h-8 rounded-lg text-xs font-bold bg-blue-900 text-white shadow-lg">1</button>
+            <button className="p-1.5 text-slate-300 hover:text-blue-900 transition-colors" disabled>
+              <ChevronRight size={18} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StatWidget({ label, value, highlight, trend, alert, progress }: any) {
+  return (
+    <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm flex flex-col justify-between">
+      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
+      <div className="mt-3">
+        <h3 className="text-2xl font-bold text-slate-800 leading-none">{value}</h3>
+        {highlight && (
+          <p className={`text-[10px] font-bold mt-2 ${trend ? 'text-emerald-600' : alert ? 'text-red-600' : 'text-slate-400'}`}>
+            {highlight}
+          </p>
+        )}
+        {progress !== undefined && (
+          <div className="w-full bg-slate-100 h-1.5 rounded-full mt-3 overflow-hidden">
+            <div className="bg-blue-500 h-full transition-all duration-1000" style={{ width: `${progress}%` }}></div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
