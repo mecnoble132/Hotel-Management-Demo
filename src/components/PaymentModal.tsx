@@ -63,9 +63,9 @@ export default function PaymentModal({ isOpen, onClose, booking }: PaymentModalP
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden"
+            className="relative bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
           >
-            <div className="flex justify-between items-center p-6 border-b border-slate-100 bg-slate-50/50">
+            <div className="flex justify-between items-center p-6 border-b border-slate-100 bg-slate-50/50 shrink-0">
               <div>
                 <h2 className="text-xl font-bold text-slate-800">Process Payment</h2>
                 <p className="text-xs text-slate-400 font-medium mt-0.5">Ref: {booking.id}</p>
@@ -75,7 +75,7 @@ export default function PaymentModal({ isOpen, onClose, booking }: PaymentModalP
               </button>
             </div>
 
-            <div className="p-6 space-y-6">
+            <div className="p-6 space-y-6 overflow-y-auto">
               <div className="bg-blue-50 rounded-xl p-4 flex items-center justify-between border border-blue-100">
                 <div className="space-y-1">
                   <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Remaining Balance</p>

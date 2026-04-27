@@ -42,9 +42,9 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-12 gap-6">
+      <div className="grid grid-cols-12 gap-4 lg:gap-6">
         {/* Core Metrics */}
-        <div className="col-span-12 lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="col-span-12 xl:col-span-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
           <MetricCard 
             label="Occupancy" 
             value={`${occupancyRate}%`} 
@@ -73,7 +73,7 @@ export default function Dashboard() {
         </div>
 
         {/* Revenue Summary */}
-        <div className="col-span-12 lg:col-span-4 bg-white p-6 rounded-lg border border-slate-200 shadow-sm flex flex-col">
+        <div className="col-span-12 xl:col-span-4 bg-white p-6 rounded-lg border border-slate-200 shadow-sm flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h4 className="text-sm font-bold uppercase tracking-wide text-slate-700">Daily Revenue</h4>
             <button className="text-slate-400 hover:text-slate-600">
@@ -175,18 +175,18 @@ export default function Dashboard() {
 
 function MetricCard({ label, value, sub, icon: Icon, iconBg, iconColor, trend }: any) {
   return (
-    <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm flex flex-col gap-1">
-      <p className="text-xs font-semibold text-slate-500 uppercase tracking-tight">{label}</p>
-      <div className="flex items-end justify-between mt-2">
-        <div className="flex items-center gap-3">
-          <div className={`p-2 ${iconBg} ${iconColor} rounded-lg`}>
-            <Icon size={20} />
-          </div>
-          <span className="text-2xl font-bold text-slate-800">{value}</span>
+    <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm flex flex-col h-full">
+      <div className="flex items-center justify-between mb-4">
+        <div className={`p-2.5 ${iconBg} ${iconColor} rounded-xl shrink-0`}>
+          <Icon size={20} />
         </div>
-        <span className={`text-xs font-medium mb-1 ${trend ? 'text-emerald-600' : 'text-slate-400'}`}>
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
+      </div>
+      <div className="mt-auto">
+        <h3 className="text-2xl font-bold text-slate-800 tracking-tight leading-none mb-2">{value}</h3>
+        <p className={`text-[10px] font-bold truncate ${trend ? 'text-emerald-600' : 'text-slate-400'}`}>
           {sub}
-        </span>
+        </p>
       </div>
     </div>
   );
@@ -194,10 +194,10 @@ function MetricCard({ label, value, sub, icon: Icon, iconBg, iconColor, trend }:
 
 function StatusBox({ icon: Icon, color, label, value }: any) {
   return (
-    <div className="flex flex-col items-center justify-center gap-1 p-2 border border-slate-100 rounded-md hover:bg-slate-50 transition-colors cursor-pointer aspect-square">
-      <Icon className={color} size={18} />
-      <span className="text-lg font-bold text-slate-800 leading-none mt-1">{value}</span>
-      <span className="text-[9px] font-bold uppercase tracking-tight text-slate-400">{label}</span>
+    <div className="flex flex-col items-center justify-center gap-1.5 p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition-all cursor-pointer group">
+      <Icon className={`${color} transition-transform group-hover:scale-110`} size={18} />
+      <span className="text-lg font-bold text-slate-800 leading-none mt-0.5">{value}</span>
+      <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 text-center">{label}</span>
     </div>
   );
 }

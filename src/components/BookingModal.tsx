@@ -75,16 +75,16 @@ export default function BookingModal({ isOpen, onClose, selectedRoomId }: Bookin
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden"
+            className="relative bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
           >
-            <div className="flex justify-between items-center p-6 border-b border-slate-100 bg-slate-50/50">
+            <div className="flex justify-between items-center p-6 border-b border-slate-100 bg-slate-50/50 shrink-0">
               <h2 className="text-xl font-bold text-slate-800">Create New Booking</h2>
               <button onClick={onClose} className="p-2 text-slate-400 hover:text-slate-600 transition-colors">
                 <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto">
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Guest Name</label>
                 <div className="relative">
