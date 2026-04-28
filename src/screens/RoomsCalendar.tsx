@@ -34,9 +34,9 @@ export default function RoomsCalendar() {
   ];
 
   return (
-    <div className="flex flex-col h-full -m-4 lg:-m-8">
-      {/* Dynamic Sub-header */}
-      <div className="px-4 lg:px-8 py-4 bg-white border-b border-slate-200 flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 z-10 shadow-sm">
+    <div className="flex flex-col gap-6">
+      {/* Dynamic Sub-header - Sticky on mobile for quick access */}
+      <div className="sticky top-[-16px] lg:static px-4 lg:px-8 py-4 bg-white border-b border-slate-200 flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 z-20 shadow-sm -mx-4 lg:mx-0">
         <div className="flex items-center gap-3 flex-1">
           <button 
             onClick={() => openBookingModal()}
@@ -77,9 +77,10 @@ export default function RoomsCalendar() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto bg-slate-100/50 p-4 lg:p-8 custom-scrollbar">
-        {/* Desktop Calendar View */}
-        <div className="hidden lg:block min-w-[1100px] bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+      <div className="flex-1 bg-slate-100/50 p-4 lg:p-8 rounded-xl border border-slate-200/50">
+        {/* Desktop Calendar View - Keep horizontal scroll for this specific component */}
+        <div className="hidden lg:block overflow-x-auto custom-scrollbar">
+          <div className="min-w-[1100px] bg-white border border-slate-200 rounded-lg shadow-sm">
           {/* Calendar Header Row */}
           <div className="flex border-b border-slate-100 bg-slate-50/30">
             <div className="w-40 shrink-0 p-4 border-r border-slate-100 flex items-center justify-center">
@@ -117,8 +118,9 @@ export default function RoomsCalendar() {
             })}
           </div>
         </div>
+      </div>
 
-        {/* Mobile Status List View */}
+      {/* Mobile Status List View */}
         <div className="lg:hidden space-y-4">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Today's Room Status</h3>
@@ -179,7 +181,7 @@ export default function RoomsCalendar() {
           </div>
         </div>
 
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 pb-24 lg:pb-8">
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
           <StatCard label="Occupancy" value={`${((rooms.filter(r => r.status === 'Occupied').length / rooms.length) * 100).toFixed(1)}%`} trend="+2.4% ↑" icon={TrendingUp} iconColor="text-emerald-500" />
           <StatCard label="Laundry Load" value={rooms.filter(r => r.status === 'Cleaning').length.toString()} trend="Pending cleans" icon={Sparkles} iconColor="text-amber-500" />
           <StatCard label="Departures" value="08" trend="Rooms to inspect" icon={LogIn} iconColor="text-blue-500" rotate />

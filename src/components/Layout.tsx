@@ -148,7 +148,7 @@ export default function Layout({ children, activeScreen, setActiveScreen, user }
         </header>
 
         {/* Content Area */}
-        <main className="p-4 lg:p-8 flex-1 relative overflow-y-auto custom-scrollbar pb-24 lg:pb-8">
+        <main className="p-4 lg:p-8 flex-1 relative overflow-y-auto custom-scrollbar pb-32 lg:pb-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeScreen}
@@ -156,7 +156,6 @@ export default function Layout({ children, activeScreen, setActiveScreen, user }
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="h-full"
             >
               {children}
             </motion.div>
@@ -164,29 +163,34 @@ export default function Layout({ children, activeScreen, setActiveScreen, user }
         </main>
 
         {/* Mobile Bottom Nav */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-slate-200 flex items-center justify-around px-2 z-[50]">
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-slate-200 flex items-center justify-around px-2 z-[60] shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
           <BottomNavItem 
             icon={LayoutDashboard} 
+            label="Home"
             active={activeScreen === 'dashboard'} 
             onClick={() => setActiveScreen('dashboard')} 
           />
           <BottomNavItem 
             icon={Calendar} 
+            label="Rooms"
             active={activeScreen === 'calendar'} 
             onClick={() => setActiveScreen('calendar')} 
           />
           <BottomNavItem 
             icon={BookOpenCheck} 
+            label="Bookings"
             active={activeScreen === 'bookings'} 
             onClick={() => setActiveScreen('bookings')} 
           />
           <BottomNavItem 
             icon={Key} 
+            label="FrontDesk"
             active={activeScreen === 'checkinout'} 
             onClick={() => setActiveScreen('checkinout')} 
           />
           <BottomNavItem 
             icon={CreditCard} 
+            label="Finance"
             active={activeScreen === 'payments'} 
             onClick={() => setActiveScreen('payments')} 
           />
@@ -196,13 +200,16 @@ export default function Layout({ children, activeScreen, setActiveScreen, user }
   );
 }
 
-function BottomNavItem({ icon: Icon, active, onClick }: { icon: any; active: boolean; onClick: () => void }) {
+function BottomNavItem({ icon: Icon, label, active, onClick }: { icon: any; label: string; active: boolean; onClick: () => void }) {
   return (
     <button 
       onClick={onClick}
-      className={`p-3 rounded-xl transition-all ${active ? 'text-blue-600 bg-blue-50' : 'text-slate-400'}`}
+      className={`flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all ${active ? 'text-blue-600' : 'text-slate-400'}`}
     >
-      <Icon size={22} />
+      <div className={`p-1.5 rounded-lg transition-colors ${active ? 'bg-blue-50' : ''}`}>
+        <Icon size={20} />
+      </div>
+      <span className={`text-[9px] font-bold uppercase tracking-tight transition-colors ${active ? 'text-blue-600' : 'text-slate-400'}`}>{label}</span>
     </button>
   );
 }

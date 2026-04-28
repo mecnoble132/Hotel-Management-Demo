@@ -23,7 +23,7 @@ export default function Dashboard({ setActiveScreen }: { setActiveScreen: (scree
     .reduce((sum, t) => sum + t.amount, 0);
   
   return (
-    <div className="space-y-6 pb-20">
+    <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Operations Overview</h1>
@@ -229,9 +229,9 @@ export default function Dashboard({ setActiveScreen }: { setActiveScreen: (scree
       {/* FAB */}
       <button 
         onClick={() => setIsBookingModalOpen(true)}
-        className="fixed bottom-6 right-6 sm:bottom-10 sm:right-10 w-12 h-12 sm:w-14 sm:h-14 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50">
-        <MessageSquare size={20} className="sm:hidden" />
-        <Plus size={24} className="hidden sm:block" />
+        className="fixed bottom-[84px] right-6 sm:bottom-10 sm:right-10 w-12 h-12 sm:w-14 sm:h-14 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-[55]"
+      >
+        <Plus size={24} />
       </button>
     </div>
   );

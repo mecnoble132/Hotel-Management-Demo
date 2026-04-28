@@ -28,7 +28,7 @@ export default function Payments() {
   });
 
   return (
-    <div className="space-y-6 pb-20">
+    <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Financial Records</h1>
