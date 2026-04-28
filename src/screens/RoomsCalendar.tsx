@@ -78,12 +78,12 @@ export default function RoomsCalendar() {
       </div>
 
       <div className="flex-1 bg-slate-100/50 p-4 lg:p-8 rounded-xl border border-slate-200/50">
-        {/* Desktop Calendar View - Keep horizontal scroll for this specific component */}
-        <div className="hidden lg:block overflow-x-auto custom-scrollbar">
-          <div className="min-w-[1100px] bg-white border border-slate-200 rounded-lg shadow-sm">
+        {/* Calendar View - Scrollable on mobile to see dates */}
+        <div className="overflow-x-auto custom-scrollbar">
+          <div className="min-w-[850px] lg:min-w-[1100px] bg-white border border-slate-200 rounded-lg shadow-sm">
           {/* Calendar Header Row */}
           <div className="flex border-b border-slate-100 bg-slate-50/30">
-            <div className="w-40 shrink-0 p-4 border-r border-slate-100 flex items-center justify-center">
+            <div className="w-32 lg:w-40 shrink-0 p-4 border-r border-slate-100 flex items-center justify-center">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Rooms / Dates</span>
             </div>
             <div className="flex-1 grid grid-cols-7">
@@ -119,67 +119,6 @@ export default function RoomsCalendar() {
           </div>
         </div>
       </div>
-
-      {/* Mobile Status List View */}
-        <div className="lg:hidden space-y-4">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Today's Room Status</h3>
-            <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full uppercase">Week 43</span>
-          </div>
-          
-          <div className="grid grid-cols-1 xs:grid-cols-2 gap-3">
-            {filteredRooms.map(room => {
-              const currentBooking = bookings.find(b => b.roomId === room.id && b.status === 'Checked-in');
-              
-              return (
-                <div 
-                  key={room.id} 
-                  onClick={() => openBookingModal(room.id)}
-                  className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden group"
-                >
-                  <div className={`absolute top-0 right-0 w-16 h-16 -mr-8 -mt-8 rotate-45 opacity-10 ${
-                    room.status === 'Available' ? 'bg-emerald-500' :
-                    room.status === 'Occupied' ? 'bg-blue-500' :
-                    room.status === 'Cleaning' ? 'bg-amber-500' : 'bg-red-500'
-                  }`}></div>
-                  
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <p className="text-xl font-bold text-slate-800 leading-none">{room.number}</p>
-                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter mt-1">{room.type}</p>
-                    </div>
-                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-tight ${
-                      room.status === 'Available' ? 'bg-emerald-100 text-emerald-700' :
-                      room.status === 'Occupied' ? 'bg-blue-100 text-blue-700' :
-                      room.status === 'Cleaning' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'
-                    }`}>
-                      {room.status}
-                    </span>
-                  </div>
-
-                  {currentBooking ? (
-                    <div className="flex items-center gap-2 pt-2 border-t border-slate-50">
-                      <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[8px] font-bold text-slate-500 uppercase">
-                        {currentBooking.guestName.split(' ')[0][0]}
-                      </div>
-                      <p className="text-[10px] font-bold text-slate-600 truncate">{currentBooking.guestName}</p>
-                    </div>
-                  ) : room.status === 'Cleaning' ? (
-                    <div className="flex items-center gap-1.5 pt-2 border-t border-slate-50">
-                      <Sparkles size={12} className="text-amber-500" />
-                      <p className="text-[10px] font-bold text-amber-600 uppercase tracking-tighter italic">Cleaning...</p>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-1.5 pt-2 border-t border-slate-50 text-slate-300">
-                      <CalendarIcon size={12} />
-                      <p className="text-[10px] font-bold uppercase tracking-tighter text-slate-300">Available</p>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
 
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
           <StatCard label="Occupancy" value={`${((rooms.filter(r => r.status === 'Occupied').length / rooms.length) * 100).toFixed(1)}%`} trend="+2.4% ↑" icon={TrendingUp} iconColor="text-emerald-500" />

@@ -45,9 +45,9 @@ export default function BookingsList() {
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center gap-6">
-        <div className="grid grid-cols-2 lg:flex gap-6 items-center flex-1">
-          <div className="flex flex-col gap-1">
+      <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center gap-6 overflow-hidden">
+        <div className="flex flex-wrap md:flex-nowrap gap-6 items-center flex-1">
+          <div className="flex flex-col gap-1 min-w-[120px]">
             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Date Range</label>
             <div className="flex items-center gap-2 text-[11px] lg:text-xs font-semibold text-slate-700 cursor-pointer">
               <Calendar size={14} className="text-slate-400 shrink-0" />
@@ -58,9 +58,9 @@ export default function BookingsList() {
 
           <div className="hidden lg:block h-8 w-px bg-slate-100"></div>
 
-          <div className="flex flex-col gap-1 col-span-1">
-            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Status</label>
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col gap-1">
+            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Status Filter</label>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
               <StatusCheckbox 
                 label="Conf." 
                 checked={selectedStatuses.includes('Confirmed')} 
