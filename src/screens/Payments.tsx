@@ -7,6 +7,10 @@ export default function Payments() {
   const { transactions, bookings } = useData();
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [selectedBookingForPayment, setSelectedBookingForPayment] = useState<any>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedMethod, setSelectedMethod] = useState('All');
+
+  const methods = ['All', 'Credit Card', 'Cash', 'Bank Transfer'];
 
   const openPaymentModal = (booking: any) => {
     setSelectedBookingForPayment(booking);
@@ -15,6 +19,13 @@ export default function Payments() {
 
   const pendingBookings = bookings.filter(b => b.paidAmount < b.totalAmount && b.status !== 'Cancelled');
   const totalRevenue = transactions.reduce((sum, t) => sum + t.amount, 0);
+
+  const filteredTransactions = transactions.filter(t => {
+    const matchesSearch = t.guestName.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          t.id.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesMethod = selectedMethod === 'All' || t.method === selectedMethod;
+    return matchesSearch && matchesMethod;
+  });
 
   return (
     <div className="space-y-6 pb-20">
@@ -70,13 +81,36 @@ export default function Payments() {
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-sm flex flex-wrap items-center gap-3">
-        <FilterSelect icon={Calendar} label="Last 30 Days" />
-        <FilterSelect icon={Filter} label="Statuses" />
-        <FilterSelect icon={CreditCard} label="Methods" />
-        <button className="ml-auto text-xs font-bold text-slate-400 hover:text-slate-600 px-3 py-1">
-          Reset
-        </button>
+      <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-sm flex flex-wrap items-center gap-4">
+        <div className="flex-1 min-w-[200px] relative">
+          <input 
+            type="text" 
+            placeholder="Search transactions or guests..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full bg-slate-50 border border-slate-200 rounded-lg py-1.5 pl-3 pr-4 text-xs focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+          />
+        </div>
+        
+        <div className="flex items-center gap-3">
+          <div className="relative group">
+            <select 
+              value={selectedMethod}
+              onChange={(e) => setSelectedMethod(e.target.value)}
+              className="appearance-none bg-white px-3 py-1.5 pr-8 rounded-lg border border-slate-200 cursor-pointer text-xs font-semibold text-slate-700 focus:ring-1 focus:ring-blue-500 outline-none min-w-[120px]"
+            >
+              {methods.map(m => <option key={m} value={m}>{m === 'All' ? 'All Methods' : m}</option>)}
+            </select>
+            <ChevronLeft size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 rotate-[-90deg] text-slate-400 pointer-events-none" />
+          </div>
+
+          <button 
+            onClick={() => { setSearchTerm(''); setSelectedMethod('All'); }}
+            className="text-xs font-bold text-slate-400 hover:text-slate-600 px-3 py-1"
+          >
+            Reset
+          </button>
+        </div>
       </div>
 
       {/* Transactions Table */}
@@ -94,7 +128,7 @@ export default function Payments() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {[...transactions].reverse().map((t, i) => (
+              {[...filteredTransactions].reverse().map((t, i) => (
                 <tr key={i} className="hover:bg-slate-50/30 transition-colors">
                   <td className="px-6 py-4 text-xs font-bold text-slate-500 font-mono tracking-tighter">#{t.id}</td>
                   <td className="px-4 py-4">
@@ -128,7 +162,7 @@ export default function Payments() {
         </div>
 
         <div className="px-6 py-3 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
-          <p className="text-xs text-slate-400 font-medium">Showing {transactions.length} transactions</p>
+          <p className="text-xs text-slate-400 font-medium">Showing {filteredTransactions.length} transactions</p>
           <div className="flex items-center gap-2">
              <button className="p-1.5 text-slate-300 hover:text-blue-900 transition-colors" disabled>
               <ChevronLeft size={18} />

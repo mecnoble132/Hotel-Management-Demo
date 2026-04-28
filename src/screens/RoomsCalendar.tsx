@@ -7,6 +7,16 @@ export default function RoomsCalendar() {
   const { rooms, bookings } = useData();
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [selectedRoomId, setSelectedRoomId] = useState<string | undefined>(undefined);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedRoomType, setSelectedRoomType] = useState('All');
+
+  const roomTypes = ['All', ...new Set(rooms.map(r => r.type))];
+
+  const filteredRooms = rooms.filter(r => {
+    const matchesSearch = r.number.toString().includes(searchTerm) || r.type.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = selectedRoomType === 'All' || r.type === selectedRoomType;
+    return matchesSearch && matchesType;
+  });
 
   const openBookingModal = (roomId?: string) => {
     setSelectedRoomId(roomId);
@@ -26,31 +36,44 @@ export default function RoomsCalendar() {
   return (
     <div className="flex flex-col h-full -m-4 lg:-m-8">
       {/* Dynamic Sub-header */}
-      <div className="px-4 lg:px-8 py-4 bg-white border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 z-10 shadow-sm">
-        <div className="flex items-center gap-3 w-full sm:w-auto">
+      <div className="px-4 lg:px-8 py-4 bg-white border-b border-slate-200 flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 z-10 shadow-sm">
+        <div className="flex items-center gap-3 flex-1">
           <button 
             onClick={() => openBookingModal()}
-            className="flex-1 sm:flex-none bg-blue-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm whitespace-nowrap"
+            className="shrink-0 bg-blue-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm whitespace-nowrap"
           >
             + New Booking
           </button>
-          <div className="flex bg-slate-50 border border-slate-200 rounded-lg p-0.5">
-            <button className="px-3 py-1 text-xs font-bold bg-white text-slate-800 shadow-sm rounded-md">D</button>
-            <button className="px-3 py-1 text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors">W</button>
-            <button className="px-3 py-1 text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors">M</button>
+          
+          <div className="relative flex-1 max-w-xs">
+            <input 
+              type="text" 
+              placeholder="Room # or type..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg py-1.5 pl-3 pr-4 text-xs focus:ring-1 focus:ring-blue-500 outline-none transition-all placeholder:text-slate-400"
+            />
+          </div>
+
+          <div className="relative shrink-0">
+            <select 
+              value={selectedRoomType}
+              onChange={(e) => setSelectedRoomType(e.target.value)}
+              className="appearance-none bg-white px-3 py-1.5 pr-8 rounded-lg border border-slate-200 cursor-pointer text-xs font-semibold text-slate-700 focus:ring-1 focus:ring-blue-500 outline-none"
+            >
+              {roomTypes.map(type => <option key={type} value={type}>{type === 'All' ? 'All Types' : type}</option>)}
+            </select>
+            <ChevronLeft size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 rotate-[-90deg] text-slate-400 pointer-events-none" />
           </div>
         </div>
 
-        <div className="flex items-center justify-between w-full sm:w-auto gap-4 lg:gap-8">
-          <div className="flex gap-3 lg:gap-4 overflow-x-auto no-scrollbar pb-1 sm:pb-0">
+        <div className="flex items-center justify-between gap-4 lg:gap-8">
+          <div className="flex gap-3 lg:gap-4 overflow-x-auto no-scrollbar">
             <Legend color="bg-emerald-500" label="Avail." />
             <Legend color="bg-blue-500" label="Occ." />
             <Legend color="bg-amber-400" label="Clean" />
             <Legend color="bg-red-500" label="Maint." />
           </div>
-          <button className="text-slate-400 hover:text-slate-600 shrink-0">
-            <Filter size={18} />
-          </button>
         </div>
       </div>
 
@@ -72,7 +95,7 @@ export default function RoomsCalendar() {
           </div>
 
           <div className="divide-y divide-slate-50">
-            {rooms.map(room => {
+            {filteredRooms.map(room => {
               const roomBookings = bookings.filter(b => b.roomId === room.id && b.status !== 'Cancelled');
               return (
                 <RoomRow

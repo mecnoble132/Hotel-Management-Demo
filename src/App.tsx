@@ -17,19 +17,20 @@ export default function App() {
   const [activeScreen, setActiveScreen] = useState('dashboard');
 
   const renderScreen = () => {
+    const commonProps = { setActiveScreen };
     switch (activeScreen) {
       case 'dashboard':
-        return <Dashboard />;
+        return <Dashboard {...commonProps} />;
       case 'calendar':
-        return <RoomsCalendar />;
+        return <RoomsCalendar {...commonProps} />;
       case 'bookings':
-        return <BookingsList />;
+        return <BookingsList {...commonProps} />;
       case 'checkinout':
-        return <CheckInOut />;
+        return <CheckInOut {...commonProps} />;
       case 'payments':
-        return <Payments />;
+        return <Payments {...commonProps} />;
       default:
-        return <Dashboard />;
+        return <Dashboard {...commonProps} />;
     }
   };
 

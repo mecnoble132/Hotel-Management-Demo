@@ -5,6 +5,10 @@ import { useData } from '../context/DataContext';
 export default function CheckInOut() {
   const { bookings, rooms, updateBooking, updateRoom } = useData();
   const [view, setView] = useState<'arrivals' | 'departures'>('arrivals');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedRoomType, setSelectedRoomType] = useState('All');
+
+  const roomTypes = ['All', ...new Set(rooms.map(r => r.type))];
 
   const arrivingToday = bookings.filter(b => {
     const today = new Date('2023-10-23'); // Demo date
@@ -19,6 +23,14 @@ export default function CheckInOut() {
   });
 
   const activeBookings = view === 'arrivals' ? arrivingToday : departingToday;
+
+  const filteredBookings = activeBookings.filter(b => {
+    const room = rooms.find(r => r.id === b.roomId);
+    const matchesSearch = b.guestName.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          (room?.number?.toString() || '').includes(searchTerm);
+    const matchesRoomType = selectedRoomType === 'All' || room?.type === selectedRoomType;
+    return matchesSearch && matchesRoomType;
+  });
 
   const handleCheckIn = (bookingId: string, roomId: string) => {
     const booking = bookings.find(b => b.id === bookingId);
@@ -76,15 +88,30 @@ export default function CheckInOut() {
       </div>
 
       <div className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm">
-        <div className="p-4 border-b border-slate-100 flex flex-col xs:flex-row items-start xs:items-center justify-between bg-slate-50/30 gap-3">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-slate-200 cursor-pointer text-xs font-semibold text-slate-700">
-              <Filter size={14} className="text-slate-400" />
-              <span>All Room Types</span>
-              <ChevronLeft size={14} className="rotate-[-90deg] text-slate-300" />
+        <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between bg-slate-50/30 gap-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1">
+            <div className="relative group">
+              <select 
+                value={selectedRoomType}
+                onChange={(e) => setSelectedRoomType(e.target.value)}
+                className="appearance-none bg-white px-3 py-1.5 pr-8 rounded-lg border border-slate-200 cursor-pointer text-xs font-semibold text-slate-700 focus:ring-1 focus:ring-blue-500 outline-none w-full"
+              >
+                {roomTypes.map(type => <option key={type} value={type}>{type === 'All' ? 'All Room Types' : type}</option>)}
+              </select>
+              <ChevronLeft size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 rotate-[-90deg] text-slate-400 pointer-events-none" />
+            </div>
+
+            <div className="relative flex-1 sm:max-w-xs">
+              <input 
+                type="text" 
+                placeholder="Search name or room..." 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full bg-white border border-slate-200 rounded-lg py-1.5 pl-3 pr-4 text-xs focus:ring-1 focus:ring-blue-500 outline-none transition-all placeholder:text-slate-400"
+              />
             </div>
           </div>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">
             {view === 'arrivals' ? `Today: ${arrivingToday.length} arrivals` : `Today: ${departingToday.length} departures`}
           </p>
         </div>
@@ -101,7 +128,7 @@ export default function CheckInOut() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {activeBookings.length > 0 ? activeBookings.map((b, i) => {
+              {filteredBookings.length > 0 ? filteredBookings.map((b, i) => {
                 const room = rooms.find(r => r.id === b.roomId);
                 
                 return (
@@ -169,7 +196,7 @@ export default function CheckInOut() {
         </div>
 
         <div className="px-6 py-3 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
-          <p className="text-xs text-slate-400 font-medium">Showing {activeBookings.length} results</p>
+          <p className="text-xs text-slate-400 font-medium">Showing {filteredBookings.length} results</p>
           <div className="flex items-center gap-2">
             <button className="p-1.5 text-slate-300 hover:text-blue-900 transition-colors" disabled>
               <ChevronLeft size={18} />

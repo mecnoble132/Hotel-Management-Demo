@@ -6,7 +6,23 @@ import BookingModal from '../components/BookingModal';
 export default function BookingsList() {
   const { bookings, rooms } = useData();
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>(['Confirmed', 'Pending', 'Checked-in', 'Checked-out']);
+
   const getRoomInfo = (roomId: string) => rooms.find(r => r.id === roomId);
+
+  const toggleStatus = (status: string) => {
+    setSelectedStatuses(prev => 
+      prev.includes(status) ? prev.filter(s => s !== status) : [...prev, status]
+    );
+  };
+
+  const filteredBookings = bookings.filter(b => {
+    const matchesSearch = b.guestName.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          b.id.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = selectedStatuses.includes(b.status);
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="space-y-6 pb-20">
@@ -45,8 +61,21 @@ export default function BookingsList() {
           <div className="flex flex-col gap-1 col-span-1">
             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Status</label>
             <div className="flex items-center gap-3">
-              <StatusCheckbox label="Conf." checked />
-              <StatusCheckbox label="Pend." checked />
+              <StatusCheckbox 
+                label="Conf." 
+                checked={selectedStatuses.includes('Confirmed')} 
+                onClick={() => toggleStatus('Confirmed')}
+              />
+              <StatusCheckbox 
+                label="Pend." 
+                checked={selectedStatuses.includes('Pending')} 
+                onClick={() => toggleStatus('Pending')}
+              />
+              <StatusCheckbox 
+                label="In" 
+                checked={selectedStatuses.includes('Checked-in')} 
+                onClick={() => toggleStatus('Checked-in')}
+              />
             </div>
           </div>
         </div>
@@ -57,6 +86,8 @@ export default function BookingsList() {
             <input 
               type="text" 
               placeholder="Search guests..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full bg-slate-50 border border-slate-200 rounded-lg py-1.5 pl-9 pr-4 text-xs focus:ring-1 focus:ring-blue-500 outline-none transition-all"
             />
           </div>
@@ -81,7 +112,7 @@ export default function BookingsList() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {[...bookings].reverse().map((b, i) => {
+              {[...filteredBookings].reverse().map((b, i) => {
                 const room = getRoomInfo(b.roomId);
                 
                 return (
@@ -165,15 +196,15 @@ export default function BookingsList() {
   );
 }
 
-function StatusCheckbox({ label, checked }: { label: string; checked?: boolean }) {
+function StatusCheckbox({ label, checked, onClick }: { label: string; checked?: boolean; onClick?: () => void }) {
   return (
-    <label className="flex items-center gap-2 cursor-pointer group">
+    <label className="flex items-center gap-2 cursor-pointer group" onClick={onClick}>
       <div className={`w-3.5 h-3.5 rounded border transition-all flex items-center justify-center ${
         checked ? 'bg-blue-600 border-blue-600' : 'border-slate-300 group-hover:border-blue-400'
       }`}>
         {checked && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
       </div>
-      <span className="text-[11px] font-medium text-slate-600 group-hover:text-blue-600 transition-colors">{label}</span>
+      <span className="text-[11px] font-medium text-slate-600 group-hover:text-blue-600 transition-colors uppercase">{label}</span>
     </label>
   );
 }

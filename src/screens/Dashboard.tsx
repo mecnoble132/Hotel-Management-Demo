@@ -3,7 +3,7 @@ import { Bed, DoorOpen, HardHat, TrendingUp, MoreVertical, CheckCircle, MessageS
 import { useData } from '../context/DataContext';
 import BookingModal from '../components/BookingModal';
 
-export default function Dashboard() {
+export default function Dashboard({ setActiveScreen }: { setActiveScreen: (screen: string) => void }) {
   const { rooms, bookings, transactions } = useData();
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
@@ -30,7 +30,10 @@ export default function Dashboard() {
           <p className="text-slate-500 text-sm mt-1 italic sm:not-italic">Monday, October 23, 2023 • 08:45 AM</p>
         </div>
         <div className="flex gap-3 w-full sm:w-auto">
-          <button className="flex-1 sm:flex-none bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors shadow-sm">
+          <button 
+            onClick={() => setActiveScreen('payments')}
+            className="flex-1 sm:flex-none bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors shadow-sm"
+          >
             Reports
           </button>
           <button 
@@ -53,6 +56,7 @@ export default function Dashboard() {
             iconBg="bg-blue-50" 
             iconColor="text-blue-600"
             trend={true}
+            onClick={() => setActiveScreen('calendar')}
           />
           <MetricCard 
             label="Check-ins" 
@@ -61,6 +65,7 @@ export default function Dashboard() {
             icon={DoorOpen} 
             iconBg="bg-slate-50" 
             iconColor="text-slate-600" 
+            onClick={() => setActiveScreen('checkinout')}
           />
           <MetricCard 
             label="Revenue (24h)" 
@@ -69,6 +74,7 @@ export default function Dashboard() {
             icon={TrendingUp} 
             iconBg="bg-emerald-50" 
             iconColor="text-emerald-600"
+            onClick={() => setActiveScreen('payments')}
           />
         </div>
 
@@ -101,7 +107,12 @@ export default function Dashboard() {
         <div className="col-span-12 lg:col-span-12 xl:col-span-7 bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden flex flex-col">
           <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
             <h3 className="text-sm font-bold uppercase tracking-wide text-slate-700">Pending Payments</h3>
-            <button className="text-xs text-blue-600 font-bold hover:underline">View All</button>
+            <button 
+              onClick={() => setActiveScreen('payments')}
+              className="text-xs text-blue-600 font-bold hover:underline"
+            >
+              View All
+            </button>
           </div>
           <div className="overflow-x-auto overflow-y-hidden">
             <table className="w-full text-left text-xs sm:text-sm min-w-[500px] border-collapse translate-z-0">
@@ -137,13 +148,42 @@ export default function Dashboard() {
         <div className="col-span-12 lg:col-span-12 xl:col-span-5 bg-white p-6 rounded-lg border border-slate-200 shadow-sm flex flex-col min-h-0">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-sm font-bold uppercase tracking-wide text-slate-700">Housekeeping Snapshot</h3>
-            <span className="text-[10px] text-slate-400 font-medium hidden xs:inline">Updated 5m ago</span>
+            <button 
+              onClick={() => setActiveScreen('calendar')}
+              className="text-[10px] text-blue-600 font-bold hover:underline"
+            >
+              View Grid
+            </button>
           </div>
           <div className="grid grid-cols-2 xs:grid-cols-4 gap-3 mb-6">
-            <StatusBox icon={CheckCircle} color="text-emerald-500" label="Clean" value={rooms.filter(r => r.status === 'Available').length.toString()} />
-            <StatusBox icon={HardHat} color="text-amber-500" label="Dirty" value={rooms.filter(r => r.status === 'Cleaning').length.toString()} />
-            <StatusBox icon={CheckCircle} color="text-blue-500" label="Occupied" value={rooms.filter(r => r.status === 'Occupied').length.toString()} />
-            <StatusBox icon={HardHat} color="text-red-500" label="Maint." value={rooms.filter(r => r.status === 'Maintenance').length.toString()} />
+            <StatusBox 
+              icon={CheckCircle} 
+              color="text-emerald-500" 
+              label="Clean" 
+              value={rooms.filter(r => r.status === 'Available').length.toString()} 
+              onClick={() => setActiveScreen('calendar')}
+            />
+            <StatusBox 
+              icon={HardHat} 
+              color="text-amber-500" 
+              label="Dirty" 
+              value={rooms.filter(r => r.status === 'Cleaning').length.toString()} 
+              onClick={() => setActiveScreen('calendar')}
+            />
+            <StatusBox 
+              icon={CheckCircle} 
+              color="text-blue-500" 
+              label="Occupied" 
+              value={rooms.filter(r => r.status === 'Occupied').length.toString()} 
+              onClick={() => setActiveScreen('calendar')}
+            />
+            <StatusBox 
+              icon={HardHat} 
+              color="text-red-500" 
+              label="Maint." 
+              value={rooms.filter(r => r.status === 'Maintenance').length.toString()} 
+              onClick={() => setActiveScreen('calendar')}
+            />
           </div>
           <div className="mt-auto p-4 bg-slate-900 text-white rounded-lg border-0 shadow-md">
             <div className="flex justify-between items-start mb-2">
@@ -173,11 +213,14 @@ export default function Dashboard() {
   );
 }
 
-function MetricCard({ label, value, sub, icon: Icon, iconBg, iconColor, trend }: any) {
+function MetricCard({ label, value, sub, icon: Icon, iconBg, iconColor, trend, onClick }: any) {
   return (
-    <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm flex flex-col h-full">
+    <div 
+      className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm flex flex-col h-full cursor-pointer hover:border-blue-200 hover:shadow-md transition-all group"
+      onClick={onClick}
+    >
       <div className="flex items-center justify-between mb-4">
-        <div className={`p-2.5 ${iconBg} ${iconColor} rounded-xl shrink-0`}>
+        <div className={`p-2.5 ${iconBg} ${iconColor} rounded-xl shrink-0 transition-transform group-hover:scale-110`}>
           <Icon size={20} />
         </div>
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
@@ -192,9 +235,12 @@ function MetricCard({ label, value, sub, icon: Icon, iconBg, iconColor, trend }:
   );
 }
 
-function StatusBox({ icon: Icon, color, label, value }: any) {
+function StatusBox({ icon: Icon, color, label, value, onClick }: any) {
   return (
-    <div className="flex flex-col items-center justify-center gap-1.5 p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition-all cursor-pointer group">
+    <div 
+      className="flex flex-col items-center justify-center gap-1.5 p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition-all cursor-pointer group"
+      onClick={onClick}
+    >
       <Icon className={`${color} transition-transform group-hover:scale-110`} size={18} />
       <span className="text-lg font-bold text-slate-800 leading-none mt-0.5">{value}</span>
       <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 text-center">{label}</span>
