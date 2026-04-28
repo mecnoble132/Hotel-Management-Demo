@@ -113,10 +113,11 @@ export default function Payments() {
         </div>
       </div>
 
-      {/* Transactions Table */}
+      {/* Transactions List */}
       <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto overflow-y-hidden">
-          <table className="w-full text-left text-sm min-w-[650px] border-collapse translate-z-0">
+          {/* Desktop Table */}
+          <table className="hidden sm:table w-full text-left text-sm min-w-[650px] border-collapse translate-z-0">
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100 text-slate-400 text-[10px] uppercase font-bold tracking-widest">
                 <th className="px-6 py-3 whitespace-nowrap">Reference</th>
@@ -159,6 +160,46 @@ export default function Payments() {
               ))}
             </tbody>
           </table>
+
+          {/* Mobile Card List */}
+          <div className="sm:hidden divide-y divide-slate-100">
+            {[...filteredTransactions].reverse().map((t, i) => (
+              <div key={i} className="p-4 space-y-3">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-[9px] font-bold text-slate-400 font-mono tracking-tighter">REF #{t.id}</p>
+                    <h4 className="font-bold text-slate-900 text-sm leading-tight mt-0.5">{t.guestName}</h4>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-tight ${
+                    t.status === 'Paid' ? 'bg-emerald-100 text-emerald-700' :
+                    t.status === 'Pending' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'
+                  }`}>
+                    {t.status}
+                  </span>
+                </div>
+                
+                <div className="flex justify-between items-end border-t border-slate-50 pt-2">
+                  <div className="space-y-1">
+                    <p className="text-[10px] text-slate-400 font-medium">{t.date}</p>
+                    <div className="flex items-center gap-1.5 text-slate-500 font-bold text-[9px] uppercase">
+                      {t.method === 'Credit Card' ? <CreditCard size={10} /> : t.method === 'Cash' ? <Banknote size={10} /> : <Landmark size={10} />}
+                      {t.method}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-slate-400 font-medium leading-none mb-1">Amount</p>
+                    <p className="text-lg font-bold text-slate-900 leading-none">${t.amount.toLocaleString()}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+            
+            {filteredTransactions.length === 0 && (
+              <div className="p-12 text-center text-slate-400 text-sm italic">
+                No transactions match your search.
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="px-6 py-3 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">

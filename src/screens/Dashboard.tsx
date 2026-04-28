@@ -47,7 +47,7 @@ export default function Dashboard({ setActiveScreen }: { setActiveScreen: (scree
 
       <div className="grid grid-cols-12 gap-4 lg:gap-6">
         {/* Core Metrics */}
-        <div className="col-span-12 xl:col-span-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+        <div className="col-span-12 xl:col-span-8 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-6">
           <MetricCard 
             label="Occupancy" 
             value={`${occupancyRate}%`} 
@@ -115,7 +115,8 @@ export default function Dashboard({ setActiveScreen }: { setActiveScreen: (scree
             </button>
           </div>
           <div className="overflow-x-auto overflow-y-hidden">
-            <table className="w-full text-left text-xs sm:text-sm min-w-[500px] border-collapse translate-z-0">
+            {/* Desktop Table */}
+            <table className="hidden sm:table w-full text-left text-xs sm:text-sm min-w-[500px] border-collapse translate-z-0">
               <thead className="bg-white border-b border-slate-100 text-slate-400 uppercase text-[10px] font-bold">
                 <tr>
                   <th className="px-6 py-3">Guest</th>
@@ -141,6 +142,29 @@ export default function Dashboard({ setActiveScreen }: { setActiveScreen: (scree
                 ))}
               </tbody>
             </table>
+
+            {/* Mobile List Cards */}
+            <div className="sm:hidden divide-y divide-slate-50">
+              {pendingPayments.slice(0, 4).map((p, i) => (
+                <div key={i} className="p-4 space-y-2">
+                  <div className="flex justify-between items-start">
+                    <div className="min-w-0">
+                      <p className="font-bold text-slate-900 truncate">{p.guestName}</p>
+                      <p className="text-[10px] text-slate-400 font-mono">ROOM #{rooms.find(r => r.id === p.roomId)?.number}</p>
+                    </div>
+                    <span className={`px-2 py-0.5 text-[9px] font-bold rounded-full uppercase tracking-tight ${
+                      p.paidAmount === 0 ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
+                    }`}>
+                      {p.paidAmount === 0 ? 'Overdue' : 'Partial'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <p className="text-xs text-slate-500">Balance Due</p>
+                    <p className="font-bold text-slate-900">${p.totalAmount.toLocaleString()}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 

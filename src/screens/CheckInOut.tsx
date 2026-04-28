@@ -117,7 +117,8 @@ export default function CheckInOut() {
         </div>
 
         <div className="overflow-x-auto overflow-y-hidden">
-          <table className="w-full text-left text-sm min-w-[600px] border-collapse translate-z-0">
+          {/* Desktop Table */}
+          <table className="hidden sm:table w-full text-left text-sm min-w-[600px] border-collapse translate-z-0">
             <thead className="bg-slate-50/50 text-slate-400 text-[10px] uppercase font-bold tracking-widest border-b border-slate-100">
               <tr>
                 <th className="px-6 py-3 whitespace-nowrap">Guest & Booking</th>
@@ -186,13 +187,78 @@ export default function CheckInOut() {
                 );
               }) : (
                 <tr>
-                  <td colSpan={5} className="px-6 py-10 text-center text-slate-400 text-sm italic">
+                  <td colSpan={5} className="px-6 py-10 text-center text-slate-400 text-sm italic whitespace-nowrap">
                     No {view} scheduled for today.
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
+
+          {/* Mobile Card List */}
+          <div className="sm:hidden divide-y divide-slate-100">
+            {filteredBookings.length > 0 ? filteredBookings.map((b, i) => {
+              const room = rooms.find(r => r.id === b.roomId);
+              return (
+                <div key={i} className="p-4 space-y-4">
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-600 text-xs">
+                        {b.guestName.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-slate-900 leading-tight">{b.guestName}</h4>
+                        <p className="text-[10px] text-slate-400 font-medium">Ref: {b.id}</p>
+                      </div>
+                    </div>
+                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-tight ${
+                      b.status === 'Checked-in' ? 'bg-emerald-100 text-emerald-700' : 
+                      b.status === 'Checked-out' ? 'bg-slate-100 text-slate-400' : 'bg-blue-100 text-blue-700'
+                    }`}>
+                      {b.status}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between py-2 border-y border-slate-50">
+                    <div className="space-y-0.5">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Room Info</p>
+                      <p className="text-xs font-bold text-slate-800">ROOM {room?.number} • {room?.type}</p>
+                    </div>
+                    <div className="text-right space-y-0.5">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Room Status</p>
+                      <div className="flex items-center gap-1.5 justify-end">
+                        <div className={`w-1.5 h-1.5 rounded-full ${room?.status === 'Available' ? 'bg-emerald-500' : room?.status === 'Cleaning' ? 'bg-amber-500' : 'bg-blue-500'}`}></div>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase">{room?.status}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-1">
+                    {view === 'arrivals' ? (
+                      <button 
+                        onClick={() => handleCheckIn(b.id, b.roomId)}
+                        disabled={room?.status !== 'Available'}
+                        className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-blue-700 transition-colors shadow-md disabled:opacity-50 disabled:grayscale"
+                      >
+                        Complete Check-in
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => handleCheckOut(b.id, b.roomId)}
+                        className="w-full bg-slate-800 text-white py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-slate-900 transition-colors shadow-md"
+                      >
+                        Complete Check-out
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            }) : (
+              <div className="p-12 text-center text-slate-400 text-sm italic">
+                No {view} scheduled for today.
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="px-6 py-3 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">

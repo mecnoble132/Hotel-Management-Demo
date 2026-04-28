@@ -97,8 +97,8 @@ export default function BookingsList() {
         </div>
       </div>
 
-      {/* Data Table */}
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+      {/* Desktop Data Table */}
+      <div className="hidden sm:block bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto overflow-y-hidden">
           <table className="w-full text-left text-sm min-w-[650px] border-collapse translate-z-0">
             <thead className="bg-[#f8fafc] border-b border-slate-100 text-slate-400 uppercase text-[10px] font-bold">
@@ -178,6 +178,67 @@ export default function BookingsList() {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Mobile Selection Cards */}
+      <div className="sm:hidden space-y-4">
+        {[...filteredBookings].reverse().map((b, i) => {
+          const room = getRoomInfo(b.roomId);
+          return (
+            <div key={i} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-4">
+              <div className="flex justify-between items-start">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs uppercase">
+                    {b.guestName.split(' ').map(n => n[0]).join('')}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-slate-900 text-sm leading-tight">{b.guestName}</h4>
+                    <p className="text-[10px] text-slate-400 font-mono">ID: #{b.id}</p>
+                  </div>
+                </div>
+                <button className="text-slate-300">
+                  <MoreVertical size={18} />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 py-3 border-y border-slate-50">
+                <div className="space-y-0.5">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Room</p>
+                  <p className="text-xs font-bold text-slate-800 tracking-tight">{room?.number} • {room?.type}</p>
+                </div>
+                <div className="space-y-0.5 text-right">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Stay</p>
+                  <p className="text-xs font-bold text-slate-800 tracking-tight">{b.nights} Nights</p>
+                </div>
+                <div className="space-y-0.5">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Dates</p>
+                  <p className="text-[11px] font-semibold text-slate-600">{b.checkIn} - {b.checkOut}</p>
+                </div>
+                <div className="space-y-0.5 text-right">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total</p>
+                  <p className="text-sm font-bold text-blue-600 tracking-tight">${b.totalAmount.toLocaleString()}</p>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center bg-slate-50 -m-4 p-3 rounded-b-xl border-t border-slate-100">
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-tight ${
+                  b.status === 'Confirmed' ? 'bg-emerald-100 text-emerald-700' :
+                  b.status === 'Pending' ? 'bg-amber-100 text-amber-700' :
+                  b.status === 'Cancelled' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'
+                }`}>
+                  {b.status}
+                </span>
+                <button className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Details →</button>
+              </div>
+            </div>
+          );
+        })}
+
+        {filteredBookings.length === 0 && (
+          <div className="text-center py-12 bg-white rounded-xl border border-dashed border-slate-200">
+            <p className="text-sm text-slate-400 font-medium">No bookings found matching your search</p>
+          </div>
+        )}
       </div>
 
       {/* Insights Grid */}

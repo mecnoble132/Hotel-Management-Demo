@@ -148,7 +148,7 @@ export default function Layout({ children, activeScreen, setActiveScreen, user }
         </header>
 
         {/* Content Area */}
-        <main className="p-4 lg:p-8 flex-1 relative overflow-y-auto custom-scrollbar">
+        <main className="p-4 lg:p-8 flex-1 relative overflow-y-auto custom-scrollbar pb-24 lg:pb-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeScreen}
@@ -162,7 +162,47 @@ export default function Layout({ children, activeScreen, setActiveScreen, user }
             </motion.div>
           </AnimatePresence>
         </main>
+
+        {/* Mobile Bottom Nav */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-slate-200 flex items-center justify-around px-2 z-[50]">
+          <BottomNavItem 
+            icon={LayoutDashboard} 
+            active={activeScreen === 'dashboard'} 
+            onClick={() => setActiveScreen('dashboard')} 
+          />
+          <BottomNavItem 
+            icon={Calendar} 
+            active={activeScreen === 'calendar'} 
+            onClick={() => setActiveScreen('calendar')} 
+          />
+          <BottomNavItem 
+            icon={BookOpenCheck} 
+            active={activeScreen === 'bookings'} 
+            onClick={() => setActiveScreen('bookings')} 
+          />
+          <BottomNavItem 
+            icon={Key} 
+            active={activeScreen === 'checkinout'} 
+            onClick={() => setActiveScreen('checkinout')} 
+          />
+          <BottomNavItem 
+            icon={CreditCard} 
+            active={activeScreen === 'payments'} 
+            onClick={() => setActiveScreen('payments')} 
+          />
+        </div>
       </div>
     </div>
+  );
+}
+
+function BottomNavItem({ icon: Icon, active, onClick }: { icon: any; active: boolean; onClick: () => void }) {
+  return (
+    <button 
+      onClick={onClick}
+      className={`p-3 rounded-xl transition-all ${active ? 'text-blue-600 bg-blue-50' : 'text-slate-400'}`}
+    >
+      <Icon size={22} />
+    </button>
   );
 }
