@@ -69,7 +69,7 @@ export default function Dashboard({ setActiveScreen }: { setActiveScreen: (scree
           />
           <MetricCard 
             label="Revenue (24h)" 
-            value={`$${dailyRevenue.toLocaleString()}`} 
+            value={`₹${dailyRevenue.toLocaleString()}`} 
             sub="Trending Up" 
             icon={TrendingUp} 
             iconBg="bg-emerald-50" 
@@ -87,7 +87,7 @@ export default function Dashboard({ setActiveScreen }: { setActiveScreen: (scree
             </button>
           </div>
           <div className="flex-1 flex flex-col justify-center">
-            <h3 className="text-3xl font-bold text-slate-800">${dailyRevenue.toLocaleString()}</h3>
+            <h3 className="text-3xl font-bold text-slate-800">₹{dailyRevenue.toLocaleString()}</h3>
             <div className="h-24 w-full flex items-end gap-1 mt-6">
               {[40, 65, 55, 85, 45, 100, 30].map((h, i) => (
                 <div 
@@ -128,9 +128,9 @@ export default function Dashboard({ setActiveScreen }: { setActiveScreen: (scree
               <tbody className="divide-y divide-slate-50">
                 {pendingPayments.slice(0, 4).map((p, i) => (
                   <tr key={i} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4 font-medium text-slate-900">{p.guestName}</td>
+                    <td className="px-4 py-4 font-medium text-slate-900">{p.guestName}</td>
                     <td className="px-4 py-4 text-slate-500 font-mono text-[10px]">#{rooms.find(r => r.id === p.roomId)?.number}</td>
-                    <td className="px-4 py-4 font-bold text-slate-900">${p.totalAmount.toLocaleString()}</td>
+                    <td className="px-4 py-4 font-bold text-slate-900">₹{p.totalAmount.toLocaleString()}</td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-0.5 text-[9px] font-bold rounded-full uppercase tracking-tight ${
                         p.paidAmount === 0 ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
@@ -160,7 +160,7 @@ export default function Dashboard({ setActiveScreen }: { setActiveScreen: (scree
                   </div>
                   <div className="flex justify-between items-center">
                     <p className="text-xs text-slate-500">Balance Due</p>
-                    <p className="font-bold text-slate-900">${p.totalAmount.toLocaleString()}</p>
+                    <p className="font-bold text-slate-900">₹{p.totalAmount.toLocaleString()}</p>
                   </div>
                 </div>
               ))}

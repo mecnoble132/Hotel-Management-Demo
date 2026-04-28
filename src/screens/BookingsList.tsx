@@ -150,7 +150,7 @@ export default function BookingsList() {
                       </span>
                     </td>
                     <td className="px-4 py-4 text-right">
-                      <p className="font-bold text-slate-900">${b.totalAmount.toLocaleString()}</p>
+                      <p className="font-bold text-slate-900">₹{b.totalAmount.toLocaleString()}</p>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <button className="text-slate-400 hover:text-slate-600">
@@ -216,7 +216,7 @@ export default function BookingsList() {
                 </div>
                 <div className="space-y-0.5 text-right">
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total</p>
-                  <p className="text-sm font-bold text-blue-600 tracking-tight">${b.totalAmount.toLocaleString()}</p>
+                  <p className="text-sm font-bold text-blue-600 tracking-tight">₹{b.totalAmount.toLocaleString()}</p>
                 </div>
               </div>
 

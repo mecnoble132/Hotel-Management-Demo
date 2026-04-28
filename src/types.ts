@@ -31,6 +31,6 @@ export interface Transaction {
   guestName: string;
   amount: number;
   date: string;
-  method: 'Credit Card' | 'Cash' | 'Bank Transfer';
+  method: 'Credit Card' | 'Cash' | 'Bank Transfer' | 'UPI';
   status: PaymentStatus;
 }

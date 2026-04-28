@@ -31,7 +31,7 @@ export default function BookingModal({ isOpen, onClose, selectedRoomId }: Bookin
     const nights = Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24));
     
     const selectedRoom = rooms.find(r => r.id === formData.roomId);
-    const rate = selectedRoom?.type === 'Penthouse' ? 800 : selectedRoom?.type === 'Suite' ? 450 : selectedRoom?.type === 'Deluxe' ? 300 : 150;
+    const rate = selectedRoom?.type === 'Penthouse' ? 8000 : selectedRoom?.type === 'Suite' ? 4500 : selectedRoom?.type === 'Deluxe' ? 3000 : 1500;
     
     const newBooking: Booking = {
       id: `BK-${Math.floor(10000 + Math.random() * 90000)}`,

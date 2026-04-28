@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Download, Plus, Calendar, Filter, CreditCard, Banknote, Landmark, MoreVertical, ChevronLeft, ChevronRight, TrendingUp, Wallet, History } from 'lucide-react';
+import { Download, Plus, Calendar, Filter, CreditCard, Banknote, Landmark, MoreVertical, ChevronLeft, ChevronRight, TrendingUp, Wallet, History, Smartphone } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import PaymentModal from '../components/PaymentModal';
 
@@ -10,7 +10,7 @@ export default function Payments() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMethod, setSelectedMethod] = useState('All');
 
-  const methods = ['All', 'Credit Card', 'Cash', 'Bank Transfer'];
+  const methods = ['All', 'Credit Card', 'UPI', 'Cash', 'Bank Transfer'];
 
   const openPaymentModal = (booking: any) => {
     setSelectedBookingForPayment(booking);
@@ -56,7 +56,7 @@ export default function Payments() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
         <FinanceCard 
           label="Total Revenue" 
-          value={`$${totalRevenue.toLocaleString()}`} 
+          value={`₹${totalRevenue.toLocaleString()}`} 
           highlight="+12.5% ↑" 
           highlightColor="text-emerald-600 font-bold"
           icon={TrendingUp} 
@@ -64,7 +64,7 @@ export default function Payments() {
         />
         <FinanceCard 
           label="Pending Billing" 
-          value={`$${bookings.reduce((sum, b) => sum + (b.totalAmount - b.paidAmount), 0).toLocaleString()}`} 
+          value={`₹${bookings.reduce((sum, b) => sum + (b.totalAmount - b.paidAmount), 0).toLocaleString()}`} 
           highlight="Critical" 
           highlightColor="text-red-600 font-bold"
           icon={Wallet} 
@@ -136,10 +136,10 @@ export default function Payments() {
                     <p className="font-semibold text-slate-900 truncate">{t.guestName}</p>
                     <p className="text-[10px] text-slate-400 mt-0.5">{t.date}</p>
                   </td>
-                  <td className="px-4 py-4 text-right font-bold text-slate-800">${t.amount.toLocaleString()}</td>
+                  <td className="px-4 py-4 text-right font-bold text-slate-800">₹{t.amount.toLocaleString()}</td>
                   <td className="px-4 py-4">
                     <div className="flex items-center gap-2 text-slate-500 font-bold text-[10px] uppercase">
-                      {t.method === 'Credit Card' ? <CreditCard size={12} className="shrink-0" /> : t.method === 'Cash' ? <Banknote size={12} className="shrink-0" /> : <Landmark size={12} className="shrink-0" />}
+                      {t.method === 'Credit Card' ? <CreditCard size={12} className="shrink-0" /> : t.method === 'Cash' ? <Banknote size={12} className="shrink-0" /> : t.method === 'UPI' ? <Smartphone size={12} className="shrink-0" /> : <Landmark size={12} className="shrink-0" />}
                       <span className="truncate">{t.method}</span>
                     </div>
                   </td>
@@ -182,13 +182,13 @@ export default function Payments() {
                   <div className="space-y-1">
                     <p className="text-[10px] text-slate-400 font-medium">{t.date}</p>
                     <div className="flex items-center gap-1.5 text-slate-500 font-bold text-[9px] uppercase">
-                      {t.method === 'Credit Card' ? <CreditCard size={10} /> : t.method === 'Cash' ? <Banknote size={10} /> : <Landmark size={10} />}
+                      {t.method === 'Credit Card' ? <CreditCard size={10} /> : t.method === 'Cash' ? <Banknote size={10} /> : t.method === 'UPI' ? <Smartphone size={10} /> : <Landmark size={10} />}
                       {t.method}
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="text-xs text-slate-400 font-medium leading-none mb-1">Amount</p>
-                    <p className="text-lg font-bold text-slate-900 leading-none">${t.amount.toLocaleString()}</p>
+                    <p className="text-lg font-bold text-slate-900 leading-none">₹{t.amount.toLocaleString()}</p>
                   </div>
                 </div>
               </div>

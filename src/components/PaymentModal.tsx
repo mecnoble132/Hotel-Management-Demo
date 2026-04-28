@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, CreditCard, DollarSign, Wallet, ArrowRight } from 'lucide-react';
+import { X, CreditCard, DollarSign, Wallet, ArrowRight, Smartphone, Landmark, Banknote } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useData } from '../context/DataContext';
 import { Booking, Transaction } from '../types';
@@ -13,7 +13,7 @@ interface PaymentModalProps {
 export default function PaymentModal({ isOpen, onClose, booking }: PaymentModalProps) {
   const { addTransaction, updateBooking } = useData();
   const [amount, setAmount] = useState('');
-  const [method, setMethod] = useState<'Credit Card' | 'Cash' | 'Bank Transfer'>('Credit Card');
+  const [method, setMethod] = useState<'Credit Card' | 'Cash' | 'Bank Transfer' | 'UPI'>('Credit Card');
 
   if (!booking) return null;
 
@@ -79,16 +79,16 @@ export default function PaymentModal({ isOpen, onClose, booking }: PaymentModalP
               <div className="bg-blue-50 rounded-xl p-4 flex items-center justify-between border border-blue-100">
                 <div className="space-y-1">
                   <p className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Remaining Balance</p>
-                  <p className="text-2xl font-bold text-blue-700">${remaining.toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-blue-700">₹{remaining.toLocaleString()}</p>
                 </div>
                 <Wallet size={32} className="text-blue-200" />
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Payment Amount</label>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Payment Amount (₹)</label>
                   <div className="relative">
-                    <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">₹</div>
                     <input
                       required
                       type="number"
@@ -111,8 +111,8 @@ export default function PaymentModal({ isOpen, onClose, booking }: PaymentModalP
 
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Method</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {(['Credit Card', 'Cash', 'Bank Transfer'] as const).map((m) => (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {(['Credit Card', 'UPI', 'Cash', 'Bank Transfer'] as const).map((m) => (
                       <button
                         key={m}
                         type="button"
@@ -123,7 +123,10 @@ export default function PaymentModal({ isOpen, onClose, booking }: PaymentModalP
                             : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300'
                         }`}
                       >
-                        <CreditCard size={18} className={method === m ? 'text-blue-400' : 'text-slate-300'} />
+                        {m === 'Credit Card' ? <CreditCard size={18} className={method === m ? 'text-blue-400' : 'text-slate-300'} /> :
+                         m === 'UPI' ? <Smartphone size={18} className={method === m ? 'text-blue-400' : 'text-slate-300'} /> :
+                         m === 'Cash' ? <Banknote size={18} className={method === m ? 'text-blue-400' : 'text-slate-300'} /> :
+                         <Landmark size={18} className={method === m ? 'text-blue-400' : 'text-slate-300'} />}
                         <span className="text-[8px] font-bold uppercase mt-1 text-center leading-tight">{m}</span>
                       </button>
                     ))}
