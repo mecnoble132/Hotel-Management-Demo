@@ -77,20 +77,20 @@ export default function RoomsCalendar() {
         </div>
       </div>
 
-      <div className="flex-1 bg-slate-100/50 p-4 lg:p-8 rounded-xl border border-slate-200/50">
+      <div className="flex-1 bg-slate-100/50 p-0 sm:p-4 lg:p-8 sm:rounded-xl border-y sm:border border-slate-200/50">
         {/* Calendar View - Scrollable on mobile to see dates */}
         <div className="overflow-x-auto custom-scrollbar">
-          <div className="min-w-[850px] lg:min-w-[1100px] bg-white border border-slate-200 rounded-lg shadow-sm">
+          <div className="min-w-[550px] md:min-w-[850px] lg:min-w-[1100px] bg-white border-x sm:border border-slate-200 sm:rounded-lg shadow-sm">
           {/* Calendar Header Row */}
-          <div className="flex border-b border-slate-100 bg-slate-50/30">
-            <div className="w-32 lg:w-40 shrink-0 p-4 border-r border-slate-100 flex items-center justify-center">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Rooms / Dates</span>
+          <div className="flex border-b border-slate-100 bg-slate-50/30 sticky top-0 z-10">
+            <div className="w-16 md:w-32 lg:w-40 shrink-0 p-3 lg:p-4 border-r border-slate-100 flex items-center justify-center bg-slate-50 sticky left-0 z-20">
+              <span className="text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">R / D</span>
             </div>
             <div className="flex-1 grid grid-cols-7">
               {dates.map((d, i) => (
-                <div key={i} className={`p-3 text-center border-r border-slate-100 flex flex-col items-center justify-center ${d.active ? 'bg-blue-50/50' : ''}`}>
-                  <p className={`text-[10px] font-bold uppercase tracking-tight ${d.active ? 'text-blue-600' : 'text-slate-400'}`}>{d.day}</p>
-                  <p className={`text-lg font-bold ${d.active ? 'text-blue-700' : 'text-slate-700'}`}>{d.num}</p>
+                <div key={i} className={`p-2 lg:p-3 text-center border-r border-slate-100 flex flex-col items-center justify-center ${d.active ? 'bg-blue-50/50' : ''}`}>
+                  <p className={`text-[8px] md:text-[10px] font-bold uppercase tracking-tight ${d.active ? 'text-blue-600' : 'text-slate-400'}`}>{d.day}</p>
+                  <p className={`text-sm md:text-lg font-bold ${d.active ? 'text-blue-700' : 'text-slate-700'}`}>{d.num}</p>
                 </div>
               ))}
             </div>
@@ -146,11 +146,16 @@ function Legend({ color, label }: { color: string; label: string }) {
 }
 
 function RoomRow({ room, type, status, bookings, onClick }: any) {
+  const roomNumber = room.split(' ')[1] || room;
   return (
-    <div className="flex h-16 hover:bg-slate-50 transition-colors cursor-pointer" onClick={onClick}>
-      <div className="w-32 lg:w-40 shrink-0 px-4 lg:px-6 border-r border-slate-100 flex flex-col justify-center">
-        <span className="text-[11px] lg:text-xs font-bold text-slate-800 truncate">{room}</span>
-        <span className="text-[8px] lg:text-[9px] text-slate-400 font-medium uppercase truncate">{type} • {status}</span>
+    <div className="flex h-16 hover:bg-slate-50 transition-colors cursor-pointer group" onClick={onClick}>
+      <div className="w-16 md:w-32 lg:w-40 shrink-0 px-2 md:px-4 lg:px-6 border-r border-slate-100 flex flex-col justify-center bg-white sticky left-0 z-10 group-hover:bg-slate-50 transition-colors">
+        <span className="text-[10px] md:text-xs font-bold text-slate-800 truncate">
+          <span className="md:hidden">#{roomNumber}</span>
+          <span className="hidden md:inline">{room}</span>
+        </span>
+        <span className="hidden md:block text-[8px] lg:text-[9px] text-slate-400 font-medium uppercase truncate">{type}</span>
+        <span className="md:hidden text-[7px] text-slate-400 font-bold uppercase truncate">{status[0]}</span>
       </div>
       <div className="flex-1 grid grid-cols-7 relative">
         {[...Array(7)].map((_, i) => (

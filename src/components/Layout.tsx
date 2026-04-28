@@ -204,12 +204,12 @@ function BottomNavItem({ icon: Icon, label, active, onClick }: { icon: any; labe
   return (
     <button 
       onClick={onClick}
-      className={`flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all ${active ? 'text-blue-600' : 'text-slate-400'}`}
+      className={`flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all active:scale-95 ${active ? 'text-blue-600' : 'text-slate-400'}`}
     >
       <div className={`p-1.5 rounded-lg transition-colors ${active ? 'bg-blue-50' : ''}`}>
-        <Icon size={20} />
+        <Icon size={20} className={active ? 'scale-110 transition-transform' : ''} />
       </div>
-      <span className={`text-[9px] font-bold uppercase tracking-tight transition-colors ${active ? 'text-blue-600' : 'text-slate-400'}`}>{label}</span>
+      <span className={`text-[8px] sm:text-[9px] font-bold uppercase tracking-tight transition-colors ${active ? 'text-blue-600' : 'text-slate-400'}`}>{label}</span>
     </button>
   );
 }

@@ -240,18 +240,18 @@ export default function Dashboard({ setActiveScreen }: { setActiveScreen: (scree
 function MetricCard({ label, value, sub, icon: Icon, iconBg, iconColor, trend, onClick }: any) {
   return (
     <div 
-      className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm flex flex-col h-full cursor-pointer hover:border-blue-200 hover:shadow-md transition-all group"
+      className="bg-white p-3 sm:p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col h-full cursor-pointer hover:border-blue-200 hover:shadow-md transition-all group active:scale-[0.98]"
       onClick={onClick}
     >
-      <div className="flex items-center justify-between mb-4">
-        <div className={`p-2.5 ${iconBg} ${iconColor} rounded-xl shrink-0 transition-transform group-hover:scale-110`}>
-          <Icon size={20} />
+      <div className="flex items-center justify-between mb-3 sm:mb-4">
+        <div className={`p-2 sm:p-2.5 ${iconBg} ${iconColor} rounded-lg sm:rounded-xl shrink-0 transition-transform group-hover:scale-110`}>
+          <Icon size={18} className="sm:w-5 sm:h-5" />
         </div>
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
+        <p className="text-[8px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
       </div>
       <div className="mt-auto">
-        <h3 className="text-2xl font-bold text-slate-800 tracking-tight leading-none mb-2">{value}</h3>
-        <p className={`text-[10px] font-bold truncate ${trend ? 'text-emerald-600' : 'text-slate-400'}`}>
+        <h3 className="text-lg sm:text-2xl font-bold text-slate-800 tracking-tight leading-none mb-1 sm:mb-2">{value}</h3>
+        <p className={`text-[8px] sm:text-[10px] font-bold truncate ${trend ? 'text-emerald-600' : 'text-slate-400'}`}>
           {sub}
         </p>
       </div>

@@ -60,14 +60,14 @@ export default function BookingsList() {
 
           <div className="flex flex-col gap-1">
             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Status Filter</label>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <div className="flex flex-wrap items-center gap-2 mt-1">
               <StatusCheckbox 
-                label="Conf." 
+                label="Confirmed" 
                 checked={selectedStatuses.includes('Confirmed')} 
                 onClick={() => toggleStatus('Confirmed')}
               />
               <StatusCheckbox 
-                label="Pend." 
+                label="Pending" 
                 checked={selectedStatuses.includes('Pending')} 
                 onClick={() => toggleStatus('Pending')}
               />
@@ -259,14 +259,16 @@ export default function BookingsList() {
 
 function StatusCheckbox({ label, checked, onClick }: { label: string; checked?: boolean; onClick?: () => void }) {
   return (
-    <label className="flex items-center gap-2 cursor-pointer group" onClick={onClick}>
-      <div className={`w-3.5 h-3.5 rounded border transition-all flex items-center justify-center ${
-        checked ? 'bg-blue-600 border-blue-600' : 'border-slate-300 group-hover:border-blue-400'
-      }`}>
-        {checked && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
-      </div>
-      <span className="text-[11px] font-medium text-slate-600 group-hover:text-blue-600 transition-colors uppercase">{label}</span>
-    </label>
+    <button 
+      onClick={onClick}
+      className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all border ${
+        checked 
+          ? 'bg-blue-600 border-blue-600 text-white shadow-sm' 
+          : 'bg-slate-50 border-slate-200 text-slate-500 hover:border-blue-300'
+      }`}
+    >
+      {label}
+    </button>
   );
 }
 
