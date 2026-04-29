@@ -19,7 +19,7 @@ const today = new Date();
 const formatDate = (offset: number) => {
   const d = new Date(today);
   d.setDate(d.getDate() + offset);
-  return d.toISOString().split('T')[0];
+  return d.toLocaleDateString('en-CA');
 };
 
 const formatDisplayDate = (offset: number) => {

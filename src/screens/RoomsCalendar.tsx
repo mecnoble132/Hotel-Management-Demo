@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Filter, TrendingUp, Sparkles, LogIn, Calendar as CalendarIcon } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import BookingModal from '../components/BookingModal';
-import { SIMULATION_DATE_OBJ } from '../constants';
+import { SIMULATION_DATE_OBJ, normalizeDate } from '../constants';
 
 export default function RoomsCalendar() {
   const { rooms, bookings } = useData();
@@ -24,9 +24,10 @@ export default function RoomsCalendar() {
     setIsBookingModalOpen(true);
   };
 
-  // Generate 7 days starting from SIMULATION_DATE_OBJ
+  // Generate 7 days starting from SIMULATION_DATE_OBJ (normalized)
+  const today = normalizeDate(SIMULATION_DATE_OBJ);
   const dates = [...Array(7)].map((_, i) => {
-    const date = new Date(SIMULATION_DATE_OBJ);
+    const date = new Date(today);
     date.setDate(date.getDate() + i);
     return {
       date: date,
@@ -107,19 +108,24 @@ export default function RoomsCalendar() {
               const roomBookings = bookings.filter(b => b.roomId === room.id && b.status !== 'Cancelled');
               
               const rowBookings = roomBookings.map(b => {
-                const checkIn = new Date(b.checkIn);
-                const checkOut = new Date(b.checkOut);
+                const checkIn = normalizeDate(b.checkIn);
+                const checkOut = normalizeDate(b.checkOut);
                 
-                // Calculate start index relative to dates[0]
+                // Calculate start index relative to dates[0] (which is already normalized 'startDate')
                 const diffTime = checkIn.getTime() - startDate.getTime();
-                const startIdx = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                const startIdx = Math.round(diffTime / (1000 * 60 * 60 * 24));
+                
+                // Calculate visible portion in our 7-day window
+                const visibleStartIdx = Math.max(0, startIdx);
+                const visibleEndIdx = Math.min(7, startIdx + b.nights);
+                const visibleSpan = visibleEndIdx - visibleStartIdx;
                 
                 // Only show if it overlaps with our 7-day window
-                if (startIdx > 6 || (startIdx + b.nights) < 0) return null;
+                if (visibleSpan <= 0) return null;
                 
                 return {
-                  start: Math.max(0, startIdx),
-                  span: Math.min(b.nights - Math.max(0, -startIdx), 7 - Math.max(0, startIdx)),
+                  start: visibleStartIdx,
+                  span: visibleSpan,
                   guest: b.guestName,
                   sub: b.status,
                   avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(b.guestName)}&background=random`

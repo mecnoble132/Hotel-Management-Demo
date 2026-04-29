@@ -3,7 +3,7 @@ import { X, Calendar, User, Mail, Hash, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useData } from '../context/DataContext';
 import { Room, Booking } from '../types';
-import { SIMULATION_DATE } from '../constants';
+import { SIMULATION_DATE, SIMULATION_DATE_OBJ, normalizeDate } from '../constants';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -12,24 +12,68 @@ interface BookingModalProps {
 }
 
 export default function BookingModal({ isOpen, onClose, selectedRoomId }: BookingModalProps) {
-  const { rooms, addBooking } = useData();
+  const { rooms, bookings, addBooking } = useData();
+  // Initialize check-out to tomorrow by default
+  const getInitialDates = () => {
+    const tomorrow = new Date(SIMULATION_DATE_OBJ);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return {
+      checkIn: SIMULATION_DATE,
+      checkOut: tomorrow.toLocaleDateString('en-CA')
+    };
+  };
+
+  const initialDates = getInitialDates();
   const [formData, setFormData] = useState({
     guestName: '',
     guestEmail: '',
     roomId: selectedRoomId || '',
-    checkIn: '',
-    checkOut: '',
+    checkIn: initialDates.checkIn,
+    checkOut: initialDates.checkOut,
     notes: '',
   });
 
-  const availableRooms = rooms.filter(r => r.status === 'Available' || r.id === selectedRoomId);
+  // Update room ID when selectedRoomId changes
+  React.useEffect(() => {
+    if (selectedRoomId) {
+      setFormData(prev => ({ ...prev, roomId: selectedRoomId }));
+    }
+  }, [selectedRoomId]);
+
+  // Check if room is available for selected dates
+  const isRoomAvailable = (roomId: string, checkIn: string, checkOut: string) => {
+    if (!checkIn || !checkOut) return true;
+    const start = normalizeDate(checkIn).getTime();
+    const end = normalizeDate(checkOut).getTime();
+    
+    return !bookings.some(b => {
+      if (b.roomId !== roomId || b.status === 'Cancelled') return false;
+      const bStart = normalizeDate(b.checkIn).getTime();
+      const bEnd = normalizeDate(b.checkOut).getTime();
+      // Overlap check: (StartA < EndB) && (EndA > StartB)
+      return (start < bEnd && end > bStart);
+    });
+  };
+
+  const availableRooms = rooms.filter(r => 
+    (r.status !== 'Maintenance' && isRoomAvailable(r.id, formData.checkIn, formData.checkOut)) || 
+    r.id === selectedRoomId
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const checkInDate = new Date(formData.checkIn);
-    const checkOutDate = new Date(formData.checkOut);
-    const nights = Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24));
+    const checkInDate = normalizeDate(formData.checkIn);
+    const checkOutDate = normalizeDate(formData.checkOut);
+    let nights = Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    // Ensure at least 1 night for visibility and billing
+    if (nights <= 0) {
+      nights = 1;
+      const newCheckOut = new Date(checkInDate);
+      newCheckOut.setDate(newCheckOut.getDate() + 1);
+      formData.checkOut = newCheckOut.toLocaleDateString('en-CA');
+    }
     
     const selectedRoom = rooms.find(r => r.id === formData.roomId);
     const rate = selectedRoom?.type === 'Penthouse' ? 8000 : selectedRoom?.type === 'Suite' ? 4500 : selectedRoom?.type === 'Deluxe' ? 3000 : 1500;
@@ -51,12 +95,13 @@ export default function BookingModal({ isOpen, onClose, selectedRoomId }: Bookin
     addBooking(newBooking);
     onClose();
     // Reset form
+    const resetDates = getInitialDates();
     setFormData({
       guestName: '',
       guestEmail: '',
       roomId: '',
-      checkIn: '',
-      checkOut: '',
+      checkIn: resetDates.checkIn,
+      checkOut: resetDates.checkOut,
       notes: '',
     });
   };
@@ -124,8 +169,9 @@ export default function BookingModal({ isOpen, onClose, selectedRoomId }: Bookin
                     <input
                       required
                       type="date"
+                      min={SIMULATION_DATE}
                       value={formData.checkIn}
-                      onChange={(e) => setFormData({ ...formData, checkIn: e.target.value })}
+                      onChange={(e) => setFormData({ ...formData, checkIn: e.target.value, checkOut: e.target.value > formData.checkOut ? e.target.value : formData.checkOut })}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                     />
                   </div>
@@ -137,6 +183,7 @@ export default function BookingModal({ isOpen, onClose, selectedRoomId }: Bookin
                     <input
                       required
                       type="date"
+                      min={formData.checkIn || SIMULATION_DATE}
                       value={formData.checkOut}
                       onChange={(e) => setFormData({ ...formData, checkOut: e.target.value })}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
