@@ -2,9 +2,9 @@ import { Room, Booking, Transaction } from '../types';
 import { rooms as initialRooms, bookings as initialBookings, transactions as initialTransactions } from '../mockData';
 
 const KEYS = {
-  ROOMS: 'grandstay_rooms_v2',
-  BOOKINGS: 'grandstay_bookings_v2',
-  TRANSACTIONS: 'grandstay_transactions_v2',
+  ROOMS: 'grandstay_rooms_v3',
+  BOOKINGS: 'grandstay_bookings_v3',
+  TRANSACTIONS: 'grandstay_transactions_v3',
 };
 
 export const storageService = {

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Bed, DoorOpen, HardHat, TrendingUp, MoreVertical, CheckCircle, MessageSquare, Plus } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import BookingModal from '../components/BookingModal';
+import { SIMULATION_DATE, SIMULATION_DATE_OBJ, formatTime } from '../constants';
 
 export default function Dashboard({ setActiveScreen }: { setActiveScreen: (screen: string) => void }) {
   const { rooms, bookings, transactions } = useData();
@@ -9,17 +10,18 @@ export default function Dashboard({ setActiveScreen }: { setActiveScreen: (scree
 
   const pendingPayments = bookings.filter(b => b.paidAmount < b.totalAmount && b.status !== 'Cancelled');
   const checkinsToday = bookings.filter(b => {
-    const today = new Date('2023-10-23'); // Demo date
+    const today = SIMULATION_DATE_OBJ;
     const checkin = new Date(b.checkIn);
     return checkin.toDateString() === today.toDateString() && b.status === 'Confirmed';
   }).length;
 
   const totalOccupied = rooms.filter(r => r.status === 'Occupied').length;
-  const occupancyRate = ((totalOccupied / rooms.length) * 100).toFixed(1);
+  const occupancyRate = rooms.length > 0 ? ((totalOccupied / rooms.length) * 100).toFixed(1) : '0';
 
   // Calculate 24h revenue from transactions
+  const displayDate = SIMULATION_DATE_OBJ.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   const dailyRevenue = transactions
-    .filter(t => t.date === 'Oct 23, 2023') // Demo date
+    .filter(t => t.date === displayDate)
     .reduce((sum, t) => sum + t.amount, 0);
   
   return (
@@ -27,7 +29,9 @@ export default function Dashboard({ setActiveScreen }: { setActiveScreen: (scree
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Operations Overview</h1>
-          <p className="text-slate-500 text-sm mt-1 italic sm:not-italic">Monday, October 23, 2023 • 08:45 AM</p>
+          <p className="text-slate-500 text-sm mt-1 italic sm:not-italic">
+            {SIMULATION_DATE_OBJ.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })} • {formatTime(SIMULATION_DATE_OBJ)}
+          </p>
         </div>
         <div className="flex gap-3 w-full sm:w-auto">
           <button 

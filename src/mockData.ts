@@ -15,14 +15,27 @@ export const rooms: Room[] = [
   { id: '12', number: '504', type: 'Penthouse', status: 'Available', floor: 5 },
 ];
 
+const today = new Date();
+const formatDate = (offset: number) => {
+  const d = new Date(today);
+  d.setDate(d.getDate() + offset);
+  return d.toISOString().split('T')[0];
+};
+
+const formatDisplayDate = (offset: number) => {
+  const d = new Date(today);
+  d.setDate(d.getDate() + offset);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+};
+
 export const bookings: Booking[] = [
   {
     id: 'BK-99021',
     guestName: 'Hari Krishnan',
     guestEmail: 'hari.krishnan@example.in',
     roomId: '11',
-    checkIn: '2023-10-14',
-    checkOut: '2023-10-18',
+    checkIn: formatDate(0), // Today
+    checkOut: formatDate(4),
     status: 'Confirmed',
     totalAmount: 15500,
     paidAmount: 15500,
@@ -33,8 +46,8 @@ export const bookings: Booking[] = [
     guestName: 'Gopi Nath',
     guestEmail: 'gopi.nath@example.in',
     roomId: '5',
-    checkIn: '2023-10-15',
-    checkOut: '2023-10-16',
+    checkIn: formatDate(-1), // Yesterday
+    checkOut: formatDate(0),
     status: 'Pending',
     totalAmount: 4500,
     paidAmount: 2000,
@@ -45,8 +58,8 @@ export const bookings: Booking[] = [
     guestName: 'Ravi Shankar',
     guestEmail: 'ravi.shankar@example.in',
     roomId: '7',
-    checkIn: '2023-10-12',
-    checkOut: '2023-10-17',
+    checkIn: formatDate(-4),
+    checkOut: formatDate(1),
     status: 'Cancelled',
     totalAmount: 48000,
     paidAmount: 0,
@@ -57,8 +70,8 @@ export const bookings: Booking[] = [
     guestName: 'Siva Kumar',
     guestEmail: 'siva.kumar@example.in',
     roomId: '6',
-    checkIn: '2023-10-20',
-    checkOut: '2023-10-22',
+    checkIn: formatDate(-9),
+    checkOut: formatDate(-7),
     status: 'Confirmed',
     totalAmount: 8500,
     paidAmount: 8500,
@@ -69,8 +82,8 @@ export const bookings: Booking[] = [
     guestName: 'Madhu Sudhan',
     guestEmail: 'madhu.s@example.in',
     roomId: '11',
-    checkIn: '2023-10-24',
-    checkOut: '2023-10-28',
+    checkIn: formatDate(-5),
+    checkOut: formatDate(-1),
     status: 'Confirmed',
     totalAmount: 18400,
     paidAmount: 18400,
@@ -81,8 +94,8 @@ export const bookings: Booking[] = [
     guestName: 'Advaith Nair',
     guestEmail: 'advaith.nair@example.in',
     roomId: '8',
-    checkIn: '2023-10-22',
-    checkOut: '2023-10-24',
+    checkIn: formatDate(-2),
+    checkOut: formatDate(0),
     status: 'Checked-in',
     totalAmount: 12500,
     paidAmount: 12500,
@@ -93,20 +106,20 @@ export const bookings: Booking[] = [
     guestName: 'Arjun Menon',
     guestEmail: 'arjun.menon@example.in',
     roomId: '1',
-    checkIn: '2023-10-25',
-    checkOut: '2023-10-27',
+    checkIn: formatDate(0),
+    checkOut: formatDate(1),
     status: 'Confirmed',
     totalAmount: 6000,
     paidAmount: 6000,
-    nights: 2,
+    nights: 1,
   },
   {
     id: 'BK-98117',
     guestName: 'Nivin Thomas',
     guestEmail: 'nivin.t@example.in',
     roomId: '3',
-    checkIn: '2023-10-26',
-    checkOut: '2023-10-30',
+    checkIn: formatDate(-3),
+    checkOut: formatDate(1),
     status: 'Confirmed',
     totalAmount: 18000,
     paidAmount: 9000,
@@ -117,8 +130,8 @@ export const bookings: Booking[] = [
     guestName: 'Rahul Raj',
     guestEmail: 'rahul.r@example.in',
     roomId: '12',
-    checkIn: '2023-10-28',
-    checkOut: '2023-11-01',
+    checkIn: formatDate(-1),
+    checkOut: formatDate(3),
     status: 'Confirmed',
     totalAmount: 32000,
     paidAmount: 0,
@@ -132,7 +145,7 @@ export const transactions: Transaction[] = [
     bookingId: 'BK-98117',
     guestName: 'Nivin Thomas',
     amount: 9000,
-    date: 'Oct 26, 2023',
+    date: formatDisplayDate(0),
     method: 'UPI',
     status: 'Paid',
   },
@@ -141,8 +154,17 @@ export const transactions: Transaction[] = [
     bookingId: 'BK-99001',
     guestName: 'Madhu Sudhan',
     amount: 18400,
-    date: 'Oct 24, 2023',
+    date: formatDisplayDate(-1),
     method: 'Credit Card',
+    status: 'Paid',
+  },
+  {
+    id: 'TRX-9406',
+    bookingId: 'BK-99021',
+    guestName: 'Hari Krishnan',
+    amount: 15500,
+    date: formatDisplayDate(0),
+    method: 'UPI',
     status: 'Paid',
   },
   {
@@ -150,7 +172,7 @@ export const transactions: Transaction[] = [
     bookingId: 'BK-99025',
     guestName: 'Gopi Nath',
     amount: 4500,
-    date: 'Oct 24, 2023',
+    date: formatDisplayDate(-1),
     method: 'UPI',
     status: 'Pending',
   },
@@ -159,7 +181,7 @@ export const transactions: Transaction[] = [
     bookingId: 'BK-99042',
     guestName: 'Siva Kumar',
     amount: 8500,
-    date: 'Oct 23, 2023',
+    date: formatDisplayDate(-9),
     method: 'Credit Card',
     status: 'Paid',
   },
@@ -168,8 +190,8 @@ export const transactions: Transaction[] = [
     bookingId: 'BK-98115',
     guestName: 'Advaith Nair',
     amount: 2500,
-    date: 'Oct 22, 2023',
+    date: formatDisplayDate(-2),
     method: 'Cash',
-    status: 'Refunded',
+    status: 'Paid',
   },
 ];

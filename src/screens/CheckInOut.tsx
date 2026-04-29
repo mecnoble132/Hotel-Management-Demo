@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { QrCode, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
 import { useData } from '../context/DataContext';
+import { SIMULATION_DATE_OBJ } from '../constants';
 
 export default function CheckInOut() {
   const { bookings, rooms, updateBooking, updateRoom } = useData();
@@ -11,13 +12,13 @@ export default function CheckInOut() {
   const roomTypes = ['All', ...new Set(rooms.map(r => r.type))];
 
   const arrivingToday = bookings.filter(b => {
-    const today = new Date('2023-10-23'); // Demo date
+    const today = SIMULATION_DATE_OBJ;
     const checkin = new Date(b.checkIn);
     return checkin.toDateString() === today.toDateString() && b.status === 'Confirmed';
   });
 
   const departingToday = bookings.filter(b => {
-    const today = new Date('2023-10-23'); // Demo date
+    const today = SIMULATION_DATE_OBJ;
     const checkout = new Date(b.checkOut);
     return checkout.toDateString() === today.toDateString() && b.status === 'Checked-in';
   });

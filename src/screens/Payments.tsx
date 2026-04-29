@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Download, Plus, Calendar, Filter, CreditCard, Banknote, Landmark, MoreVertical, ChevronLeft, ChevronRight, TrendingUp, Wallet, History, Smartphone } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import PaymentModal from '../components/PaymentModal';
+import { SIMULATION_DATE_OBJ } from '../constants';
 
 export default function Payments() {
   const { transactions, bookings } = useData();
@@ -11,6 +12,8 @@ export default function Payments() {
   const [selectedMethod, setSelectedMethod] = useState('All');
 
   const methods = ['All', 'Credit Card', 'UPI', 'Cash', 'Bank Transfer'];
+
+  const displayDate = SIMULATION_DATE_OBJ.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
   const openPaymentModal = (booking: any) => {
     setSelectedBookingForPayment(booking);
@@ -72,7 +75,7 @@ export default function Payments() {
         />
         <FinanceCard 
           label="Daily Transactions" 
-          value={transactions.filter(t => t.date === 'Oct 23, 2023').length.toString()} 
+          value={transactions.filter(t => t.date === displayDate).length.toString()} 
           highlight="Normal" 
           highlightColor="text-slate-500 font-bold"
           icon={History} 

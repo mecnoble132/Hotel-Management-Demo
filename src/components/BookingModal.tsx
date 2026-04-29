@@ -3,6 +3,7 @@ import { X, Calendar, User, Mail, Hash, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useData } from '../context/DataContext';
 import { Room, Booking } from '../types';
+import { SIMULATION_DATE } from '../constants';
 
 interface BookingModalProps {
   isOpen: boolean;

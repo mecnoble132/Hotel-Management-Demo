@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Download, Plus, Search, Calendar, ChevronDown, Filter, MoreVertical, ChevronLeft, ChevronRight, TrendingUp } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import BookingModal from '../components/BookingModal';
+import { SIMULATION_DATE_OBJ } from '../constants';
 
 export default function BookingsList() {
   const { bookings, rooms } = useData();
@@ -10,6 +11,11 @@ export default function BookingsList() {
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>(['Confirmed', 'Pending', 'Checked-in', 'Checked-out']);
 
   const getRoomInfo = (roomId: string) => rooms.find(r => r.id === roomId);
+
+  // Filter display text
+  const filterDateLabel = SIMULATION_DATE_OBJ.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + 
+                         ' - ' + 
+                         new Date(new Date(SIMULATION_DATE_OBJ).setDate(SIMULATION_DATE_OBJ.getDate() + 7)).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
   const toggleStatus = (status: string) => {
     setSelectedStatuses(prev => 
@@ -51,7 +57,7 @@ export default function BookingsList() {
             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Date Range</label>
             <div className="flex items-center gap-2 text-[11px] lg:text-xs font-semibold text-slate-700 cursor-pointer">
               <Calendar size={14} className="text-slate-400 shrink-0" />
-              <span className="truncate">Oct 12 - 20, 2023</span>
+              <span className="truncate">{filterDateLabel}</span>
               <ChevronDown size={14} className="text-slate-400 shrink-0" />
             </div>
           </div>

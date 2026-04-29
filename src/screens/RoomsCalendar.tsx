@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Filter, TrendingUp, Sparkles, LogIn, Calendar as CalendarIcon } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import BookingModal from '../components/BookingModal';
+import { SIMULATION_DATE_OBJ } from '../constants';
 
 export default function RoomsCalendar() {
   const { rooms, bookings } = useData();
@@ -23,15 +24,20 @@ export default function RoomsCalendar() {
     setIsBookingModalOpen(true);
   };
 
-  const dates = [
-    { day: 'MON', num: '23', accent: 'bg-blue-50/50', active: true },
-    { day: 'TUE', num: '24', accent: '' },
-    { day: 'WED', num: '25', accent: '' },
-    { day: 'THU', num: '26', accent: '' },
-    { day: 'FRI', num: '27', accent: '' },
-    { day: 'SAT', num: '28', accent: 'bg-slate-50' },
-    { day: 'SUN', num: '29', accent: 'bg-slate-50' },
-  ];
+  // Generate 7 days starting from SIMULATION_DATE_OBJ
+  const dates = [...Array(7)].map((_, i) => {
+    const date = new Date(SIMULATION_DATE_OBJ);
+    date.setDate(date.getDate() + i);
+    return {
+      date: date,
+      day: date.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase(),
+      num: date.getDate().toString(),
+      active: i === 0
+    };
+  });
+
+  const startDate = dates[0].date;
+  const endDate = dates[6].date;
 
   return (
     <div className="flex flex-col gap-6">
@@ -99,19 +105,34 @@ export default function RoomsCalendar() {
           <div className="divide-y divide-slate-50">
             {filteredRooms.map(room => {
               const roomBookings = bookings.filter(b => b.roomId === room.id && b.status !== 'Cancelled');
+              
+              const rowBookings = roomBookings.map(b => {
+                const checkIn = new Date(b.checkIn);
+                const checkOut = new Date(b.checkOut);
+                
+                // Calculate start index relative to dates[0]
+                const diffTime = checkIn.getTime() - startDate.getTime();
+                const startIdx = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                
+                // Only show if it overlaps with our 7-day window
+                if (startIdx > 6 || (startIdx + b.nights) < 0) return null;
+                
+                return {
+                  start: Math.max(0, startIdx),
+                  span: Math.min(b.nights - Math.max(0, -startIdx), 7 - Math.max(0, startIdx)),
+                  guest: b.guestName,
+                  sub: b.status,
+                  avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(b.guestName)}&background=random`
+                };
+              }).filter(Boolean);
+
               return (
                 <RoomRow
                   key={room.id}
                   room={`Room ${room.number}`}
                   type={room.type}
                   status={room.status}
-                  bookings={roomBookings.map(b => ({
-                    start: 0, // Simplified for demo
-                    span: b.nights || 1,
-                    guest: b.guestName,
-                    sub: b.status,
-                    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(b.guestName)}&background=random`
-                  }))}
+                  bookings={rowBookings}
                   onClick={() => openBookingModal(room.id)}
                 />
               );

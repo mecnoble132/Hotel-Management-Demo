@@ -1,6 +1,7 @@
 import React from 'react';
 import { LayoutDashboard, Calendar, BookOpenCheck, Key, CreditCard, Bell, HelpCircle, Search, Menu, Settings, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { SIMULATION_DATE_OBJ, formatTime } from '../constants';
 
 interface SidebarItemProps {
   icon: React.ElementType;
@@ -123,7 +124,9 @@ export default function Layout({ children, activeScreen, setActiveScreen, user }
               {activeScreen.charAt(0).toUpperCase() + activeScreen.slice(1).replace(/([A-Z])/g, ' $1')}
             </h2>
             <div className="hidden sm:block w-px h-6 bg-slate-200 mx-1 lg:mx-2"></div>
-            <span className="hidden sm:inline text-slate-400 text-xs lg:text-sm italic whitespace-nowrap">Monday, Oct 23, 2023</span>
+            <span className="hidden sm:inline text-slate-400 text-xs lg:text-sm italic whitespace-nowrap">
+              {SIMULATION_DATE_OBJ.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' })} • {formatTime(SIMULATION_DATE_OBJ)}
+            </span>
           </div>
 
           <div className="flex items-center gap-3 lg:gap-6">

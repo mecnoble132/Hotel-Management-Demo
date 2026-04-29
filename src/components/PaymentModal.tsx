@@ -3,6 +3,7 @@ import { X, CreditCard, DollarSign, Wallet, ArrowRight, Smartphone, Landmark, Ba
 import { motion, AnimatePresence } from 'motion/react';
 import { useData } from '../context/DataContext';
 import { Booking, Transaction } from '../types';
+import { SIMULATION_DATE_OBJ } from '../constants';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -30,7 +31,7 @@ export default function PaymentModal({ isOpen, onClose, booking }: PaymentModalP
       bookingId: booking.id,
       guestName: booking.guestName,
       amount: payAmount,
-      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      date: SIMULATION_DATE_OBJ.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       method: method,
       status: 'Paid',
     };
